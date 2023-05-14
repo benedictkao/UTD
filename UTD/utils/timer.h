@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <string>
 
 // Utility classes
 namespace utils {
@@ -51,28 +52,29 @@ void print_interval(
 }
 
 // Helper Timer Class using std::chrono
-class timer {
+class Timer {
        private:
-        std::chrono::time_point<std::chrono::steady_clock> start_time;
-        std::chrono::time_point<std::chrono::steady_clock> end_time;
+        std::chrono::time_point<std::chrono::steady_clock> start_time_;
+        std::chrono::time_point<std::chrono::steady_clock> end_time_;
 
         void reset() {
-                start_time = std::chrono::steady_clock::now();
-                end_time = std::chrono::steady_clock::now();
+                start_time_ = std::chrono::steady_clock::now();
+                end_time_ = std::chrono::steady_clock::now();
         }
 
        public:
-        timer() { reset(); }
+        Timer() { reset(); }
 
         void start() { reset(); }
 
-        void stop() { end_time = std::chrono::steady_clock::now(); }
+        void stop() { end_time_ = std::chrono::steady_clock::now(); }
 
         void print_reading(enum UNIT_TIME u_t) {
-                print_interval(start_time, end_time, u_t);
+                print_interval(start_time_, end_time_, u_t);
         }
 };
 
+// Helper Time function
 void time(void (*func)(), enum UNIT_TIME u_t) {
         std::chrono::time_point<std::chrono::steady_clock> start_time =
             std::chrono::steady_clock::now();
@@ -83,6 +85,27 @@ void time(void (*func)(), enum UNIT_TIME u_t) {
             std::chrono::steady_clock::now();
 
         print_interval(start_time, end_time, u_t);
+};
+
+// Helper Timer Class RAII Style
+class Timer_raii {
+       public:
+        Timer_raii(std::string helper_text, enum UNIT_TIME u_t) {
+                std::cout << helper_text << std::endl;
+                start_time_ = std::chrono::steady_clock::now();
+                u_t_ = u_t;
+        }
+
+        ~Timer_raii() {
+                std::chrono::time_point<std::chrono::steady_clock> end_time_ =
+                    std::chrono::steady_clock::now();
+                print_interval(start_time_, end_time_, u_t_);
+        }
+
+       private:
+        std::chrono::time_point<std::chrono::steady_clock> start_time_;
+        std::chrono::time_point<std::chrono::steady_clock> end_time_;
+        enum UNIT_TIME u_t_;
 };
 
 }  // namespace utils
