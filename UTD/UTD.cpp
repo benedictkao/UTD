@@ -31,7 +31,7 @@ int main() {
         }
 
         clock_watch.stop();
-        clock_watch.print_reading();
+        clock_watch.print_reading(utils::MICRO_SEC);
 
         std::cout << a.get(0) << ", " << a.get(1) << std::endl;
 
@@ -39,7 +39,7 @@ int main() {
         std::cout << "TIMER METHOD"
                   << "\n";
 
-        utils::time(main_test);
+        utils::time(main_test, utils::MICRO_SEC);
 
         return 0;
 };
