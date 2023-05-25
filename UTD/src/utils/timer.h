@@ -1,111 +1,53 @@
 #pragma once
 
 #include <chrono>
-#include <iostream>
-#include <string>
 
 // Utility classes
 namespace utils {
 
-enum UNIT_TIME { MILLI_SEC = 1, MICRO_SEC = 2, SEC = 3 };
+    enum UNIT_TIME { MILLI_SEC = 1, MICRO_SEC = 2, SEC = 3 };
+    enum TIMER_METHOD { FUNCTION, MANUAL, RAII };
 
-void print_interval(
-    std::chrono::time_point<std::chrono::steady_clock> start_time,
-    std::chrono::time_point<std::chrono::steady_clock> end_time,
-    enum UNIT_TIME u_t) {
-        switch (u_t) {
-                case MICRO_SEC: {
-                        const auto interval = std::chrono::duration_cast<
-                            std::chrono::microseconds>(end_time - start_time);
+    using chrono_clock = std::chrono::steady_clock;
+    using chrono_time = std::chrono::time_point<chrono_clock>;
+    using void_func = void (*)();
 
-                        std::cout << "Time Reading: " << interval.count()
-                                  << " microseconds"
-                                  << "\n";
-                        break;
-                };
-                case MILLI_SEC: {
-                        const auto interval = std::chrono::duration_cast<
-                            std::chrono::milliseconds>(end_time - start_time);
+    void print_interval(chrono_time start_time, chrono_time end_time, UNIT_TIME u_t);
 
-                        std::cout << "Time Reading: " << interval.count()
-                                  << " milliseconds"
-                                  << "\n";
-                }
-                case SEC: {
-                        const auto interval =
-                            std::chrono::duration_cast<std::chrono::seconds>(
-                                end_time - start_time);
+    void time(void_func func, TIMER_METHOD method = TIMER_METHOD::FUNCTION);
 
-                        std::cout << "Time Reading: " << interval.count()
-                                  << " seconds"
-                                  << "\n";
-                }
-                default: {
-                        const auto interval = std::chrono::duration_cast<
-                            std::chrono::microseconds>(end_time - start_time);
+    // Helper Timer Class using std::chrono
+    class Timer {
 
-                        std::cout << "Time Reading: " << interval.count()
-                                  << " microseconds"
-                                  << "\n";
-                }
-        }
-}
+    private:
+        chrono_time start_time_;
+        chrono_time end_time_;
 
-// Helper Timer Class using std::chrono
-class Timer {
-       private:
-        std::chrono::time_point<std::chrono::steady_clock> start_time_;
-        std::chrono::time_point<std::chrono::steady_clock> end_time_;
+    public:
+        Timer();
 
-        void reset() {
-                start_time_ = std::chrono::steady_clock::now();
-                end_time_ = std::chrono::steady_clock::now();
-        }
+        void start_from_zero();
 
-       public:
-        Timer() { reset(); }
+        void stop();
 
-        void start() { reset(); }
+        void print_reading(UNIT_TIME u_t);
+    };
 
-        void stop() { end_time_ = std::chrono::steady_clock::now(); }
+    // Helper Time function
+    void time(void_func func, UNIT_TIME u_t);
 
-        void print_reading(enum UNIT_TIME u_t) {
-                print_interval(start_time_, end_time_, u_t);
-        }
-};
+    // Helper Timer Class RAII Style
+    class Timer_raii {
 
-// Helper Time function
-void time(void (*func)(), enum UNIT_TIME u_t) {
-        std::chrono::time_point<std::chrono::steady_clock> start_time =
-            std::chrono::steady_clock::now();
+    private:
+        chrono_time start_time_;
+        chrono_time end_time_;
+        UNIT_TIME u_t_;
 
-        func();
+    public:
+        Timer_raii(UNIT_TIME u_t);
 
-        std::chrono::time_point<std::chrono::steady_clock> end_time =
-            std::chrono::steady_clock::now();
-
-        print_interval(start_time, end_time, u_t);
-};
-
-// Helper Timer Class RAII Style
-class Timer_raii {
-       public:
-        Timer_raii(std::string helper_text, enum UNIT_TIME u_t) {
-                std::cout << helper_text << std::endl;
-                start_time_ = std::chrono::steady_clock::now();
-                u_t_ = u_t;
-        }
-
-        ~Timer_raii() {
-                std::chrono::time_point<std::chrono::steady_clock> end_time_ =
-                    std::chrono::steady_clock::now();
-                print_interval(start_time_, end_time_, u_t_);
-        }
-
-       private:
-        std::chrono::time_point<std::chrono::steady_clock> start_time_;
-        std::chrono::time_point<std::chrono::steady_clock> end_time_;
-        enum UNIT_TIME u_t_;
-};
+        ~Timer_raii();
+    };
 
 }  // namespace utils
