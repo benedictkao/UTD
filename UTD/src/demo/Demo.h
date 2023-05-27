@@ -1,5 +1,7 @@
 ﻿#pragma once
 
 namespace demo {
-	void test_array();
+	void time_array();
+
+	void demo_string();
 }

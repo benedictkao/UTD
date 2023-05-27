@@ -1,7 +1,8 @@
 #include "Demo.h"
 
 int main() {
-    demo::test_array();
+
+    demo::demo_string();
 
     return 0;
 };

@@ -1,6 +1,9 @@
 ﻿#include "Demo.h"
 
+#include <iostream>
+
 #include "../data-structures/Array.h"
+#include "../data-structures/String.h"
 #include "../utils/Timer.h"
 
 static void run_array() {
@@ -12,6 +15,39 @@ static void run_array() {
     }
 };
 
-void demo::test_array() {
+void demo::time_array() {
     utils::time(run_array);
+}
+
+void demo::demo_string() {
+    utd::string s = "A string";                             // move assignment
+    std::cout << "Init string    : " << s << std::endl;
+
+    utd::string s2 = s;                                     // copy assignment
+    std::cout << "Copy string    : " << s2 << std::endl;
+
+    utd::string s3 = std::move(s);
+    std::cout << "Move string    : " << s3 << std::endl;
+
+    s2[0] = 'a';
+    std::cout << "Change char    : " << s2 << std::endl;
+
+    s = "This is ";                                         // move assignment
+    s3 = s + s2;                                            // move assignment
+    std::cout << "+ string       : " << s3 << std::endl;
+
+    s3 += " demo";
+    std::cout << "+= string      : " << s3 << std::endl;
+
+    s3 = s3 + '?';
+    std::cout << "+ char         : " << s3 << std::endl;
+
+    s3 += '!';
+    std::cout << "+= char        : " << s3 << std::endl;
+
+    s = s3.substr(8, 8);
+    std::cout << "Substring      : " << s << std::endl;
+
+    std::cout << "Comparison 1   : " << s << " == " << s2 << " = " << (s == s2) << std::endl;
+    std::cout << "Comparison 2   : " << s << " == " << s3 << " = " << (s == s3) << std::endl;
 }

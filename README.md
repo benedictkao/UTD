@@ -4,6 +4,7 @@ Our own implementation of C++ std library classes and data structures to investi
 
 Current Data Structures:
 1. Array
+2. String
 
 Collaborators: Ben, Chris
 

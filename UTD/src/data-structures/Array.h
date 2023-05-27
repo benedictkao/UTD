@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace utd
 {
 
@@ -26,8 +24,6 @@ namespace utd
 		*/
 		T& operator [](size_t index)
 		{
-			if (index < 0 || index >= array_size)
-				throw std::out_of_range("Index out of bounds");
 			return innerArray[index];
 		}
 
@@ -36,8 +32,6 @@ namespace utd
 		*/
 		const T& operator [](size_t index) const
 		{
-			if (index < 0 || index >= array_size)
-				throw std::out_of_range("Index out of bounds");
 			return innerArray[index];
 		}
 	};
