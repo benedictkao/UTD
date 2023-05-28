@@ -1,18 +1,29 @@
 
 #include "String.h"
 
-void utd::string::set_up(size_t size)
+int utd::string::set_up(size_t size)
 {
     _max_size = size + 1;
     _size = size;
-    _str_ptr = (char *)malloc(_max_size * sizeof(char));
+
+    if (NULL == (_str_ptr = (char *)malloc(_max_size * sizeof(char))))
+    {
+        printf("Error malloc");
+        return -1;
+    }
+    return 1;
 }
 
-void utd::string::resize(size_t size)
+int utd::string::resize(size_t size)
 {
     _max_size = size + 1;
     _size = size;
-    realloc(_str_ptr, _max_size * sizeof(char));
+    if (NULL == realloc(_str_ptr, _max_size * sizeof(char)))
+    {
+        printf("Error realloc");
+        return -1;
+    }
+    return 1;
 }
 
 utd::string::string()

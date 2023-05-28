@@ -15,9 +15,9 @@ namespace utd
         size_t _size;
         size_t _max_size;
 
-        void set_up(size_t);
+        int set_up(size_t);
 
-        void resize(size_t);
+        int resize(size_t);
 
     public:
         /*
@@ -73,6 +73,33 @@ namespace utd
                 throw std::range_error("Out of bounds");
 
             return _str_ptr[idx];
+        }
+
+        string &operator+=(const string &str)
+        {
+            size_t original_size = size();
+            size_t new_size = str.size() + original_size;
+
+            if (new_size > _max_size && resize(new_size) == -1)
+                throw std::runtime_error("Error resizing");
+
+            str.cpy(_str_ptr + original_size, str.size());
+
+            return *this;
+        }
+
+        const bool &operator==(const string &str) const
+        {
+            if (size() != str.size())
+                return false;
+
+            for (int i = 0; i < size(); i++)
+            {
+                if (str._str_ptr[i] != _str_ptr[i])
+                    return false;
+            }
+
+            return true;
         }
 
         // must be immutable

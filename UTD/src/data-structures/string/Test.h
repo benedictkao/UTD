@@ -14,6 +14,16 @@ namespace utd
         std::cout << "Expected [" << expected.c_str() << "] - got [" << actual.c_str() << "] \n";
     }
 
+    void print_expect(size_t expected, size_t actual)
+    {
+        std::cout << "Expected [" << expected << "] - got [" << actual << "] \n";
+    }
+
+    void print_expect(char expected, char actual)
+    {
+        std::cout << "Expected [" << expected << "] - got [" << actual << "] \n";
+    }
+
     void string_constructor_test_suites()
     {
         std::cout << "Start constructor test suites \n";
@@ -49,6 +59,30 @@ namespace utd
     void string_methods_test_suites()
     {
         std::cout << "TEST Methods";
+
+        // base string
+        std::string s("hello");
+
+        // from c string
+        char c[6] = "hello";
+        string s1(c);
+
+        print_expect(s1.size(), s.size());
+        std::cout << "checkpoint 5 \n";
+
+        print_expect(s1[2], s[2]);
+        std::cout << "checkpoint 6 \n";
+
+        s1 += s1;
+        std::string s1_test("hellohello");
+        print_expect(s1_test, s1);
+        std::cout << "checkpoint 7 \n";
+
+        string s2("hellohello");
+        if (s2 == s1)
+            std::cout << "true" << '\n';
+
+        std::cout << "checkpoint 8 \n";
     };
 
     void string_test_suites()
