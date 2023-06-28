@@ -55,6 +55,7 @@ namespace utd {
     ~vector() { delete[] capacity_head; }
 
     // Constructors
+    // TODO: list initialiser
     vector() { init_vector(0); }
 
     vector(size_t size) { init_vector(size); }
@@ -91,6 +92,7 @@ namespace utd {
     };
 
     // move constructor
+    // TODO: steal the resources
     vector(vector&& target_vector) {
       init_vector(0);
 
@@ -143,6 +145,7 @@ namespace utd {
       return capacity_head[vector_head + idx];
     }
 
+    // TODO: does clear resizes the inner array
     void clear() {
       memset(capacity_head, 0, sizeof(T) * capacity);
       init_vector(0);
@@ -153,6 +156,8 @@ namespace utd {
         return;
 
       T* new_capacity_head;
+      // TODO: undefined behaviour, will it actually throw if memory alloc fails
+      // TODO: Do we need this ?
       if (nullptr == (new_capacity_head = new T[new_capacity])) {
         throw ResizeCapacityErr();
       }
