@@ -20,7 +20,7 @@ target_sources(timer PRIVATE src/utils/Timer.cpp)
 ### String
 add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
-target_sources(string PRIVATE src/data-structures/String.cpp)
+target_sources(string PRIVATE src/data-structures/String.cpp src/data-structures/String32.cpp)
 
 # Test 
 enable_testing()
