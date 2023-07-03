@@ -4,6 +4,7 @@
 
 #include "../data-structures/Array.h"
 #include "../data-structures/String.h"
+#include "../data-structures/String32.h"
 #include "../utils/Timer.h"
 
 static void run_array() {
@@ -50,4 +51,12 @@ void demo::demo_string() {
 
     std::cout << "Comparison 1   : " << s << " == " << s2 << " = " << (s == s2) << std::endl;
     std::cout << "Comparison 2   : " << s << " == " << s3 << " = " << (s == s3) << std::endl;
+}
+
+void demo::demo_string32() {
+    utd::string32 stack_string = "A short string.";                    // size 15
+    utd::string32 heap_string = "A slightly longer string.";           // size 25
+    utd::string32* p = &stack_string;
+    utd::string32* p2 = &heap_string;
+    std::cout << "Demo complete" << std::endl;
 }
