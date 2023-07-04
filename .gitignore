@@ -371,3 +371,6 @@ Makefile
 *.cmake
 
 ~.un
+
+# Ignores build folders
+build/
