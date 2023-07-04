@@ -20,3 +20,26 @@ Collaborators: Ben, Chris
 ### Google Tests Guide
 
 - https://google.github.io/googletest/primer.html
+
+### How to Run In Windows
+1. Navigate to source directory (UTD folder)
+2. If you don't already have a build folder, create one, otherwise skip to step 3
+```
+mkdir build
+```
+3. Navigate to the build folder
+```
+cd build
+```
+4. Run cmake to generate the Makefile
+```
+cmake .. -G "Nmake Makefiles"
+```
+5. Run nmake to build the executables from the Makefile
+```
+nmake
+```
+6. Run the executable. Ex:
+```
+UTD
+```
