@@ -15,10 +15,10 @@ namespace utd {
     size_t vector_head = 0;
     size_t vector_size = 0;
 
-    T*     capacity_head        = nullptr;
-    size_t capacity             = 1;
-    size_t capacity_resize_rate = 2;
-    size_t min_capacity         = 12;
+    T*           capacity_head;
+    size_t       capacity;
+    const size_t capacity_resize_rate = 2;
+    const size_t min_capacity         = 12;
 
     void init_capacity(size_t size) {
       capacity      = max(size, min_capacity);
