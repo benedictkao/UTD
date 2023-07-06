@@ -7,6 +7,8 @@
 #include "../data-structures/String32.h"
 #include "../utils/Timer.h"
 
+static constexpr char new_line{ '\n' };
+
 static void run_array() {
     utd::array<int, 2> a;
 
@@ -54,9 +56,27 @@ void demo::demo_string() {
 }
 
 void demo::demo_string32() {
-    utd::string32 stack_string = "A short string.";                    // size 15
-    utd::string32 heap_string = "A slightly longer string.";           // size 25
-    utd::string32* p = &stack_string;
-    utd::string32* p2 = &heap_string;
-    std::cout << "Demo complete" << std::endl;
+    utd::string32 stack_string = "A stack string.";                    // size 15
+    std::cout << stack_string << new_line;
+    std::cout << " Size=" << stack_string.size() << new_line;
+    void* cap_addr = (void*)((char*)&stack_string + 16);               // sizeof(_data) = 8, sizeof(_size) = 8
+    std::cout << "capacity address=" << cap_addr
+              << ", data address=" << (void *)stack_string.c_str() << new_line;
+
+    utd::string32 heap_string = "A heap allocated string.";           // size 24
+    std::cout << heap_string << new_line;
+    std::cout << " Size=" << heap_string.size() << new_line;
+    cap_addr = (void*)((char*)&heap_string + 16);
+    std::cout << "capacity address=" << cap_addr
+        << ", data address=" << (void*)heap_string.c_str() << new_line;
+
+    std::cout << "stack string capacity before reserve   = " << stack_string.capacity() << new_line;
+    stack_string.reserve(49);
+    std::cout << "stack string capacity after reserve 49 = " << stack_string.capacity() << new_line;
+
+    std::cout << "heap string capacity before reserve    = " << heap_string.capacity() << new_line;
+    heap_string.reserve(15);
+    std::cout << "heap string capacity after reserve 15  = " << heap_string.capacity() << new_line;
+    heap_string.reserve(49);
+    std::cout << "heap string capacity after reserve 49  = " << heap_string.capacity() << new_line;
 }

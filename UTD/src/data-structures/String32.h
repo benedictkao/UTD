@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <iostream>
 
 namespace utd {
 	class string32 {
@@ -18,14 +19,44 @@ namespace utd {
 
 		bool isLargeString() const;
 
-		void setType(STRING_TYPE type);
+		void setType(STRING_TYPE);
 
 	public:
 
+		string32();
+
 		string32(const char*);
+
+		string32(const string32&);
+		
+		string32(string32&&) noexcept;
+		
+		string32& operator=(const string32&);
+
+		string32& operator=(string32&&) noexcept;
 
 		~string32();
 
 		uint64_t size() const;
+
+		uint64_t capacity() const;
+
+		const char* c_str() const;
+
+		void reserve(uint64_t);
+
+		char& operator [](uint64_t);
+
+		string32 operator+(const string32&) const;
+
+		string32& operator+=(const string32&);
+
+		string32 operator+(const char&) const;
+
+		string32& operator+=(const char&);
+
+		friend bool operator==(const string32&, const string32&);
+
+		friend std::ostream& operator<<(std::ostream&, const string32&);
 	};
 }
