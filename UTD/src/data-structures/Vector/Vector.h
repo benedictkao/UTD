@@ -6,45 +6,28 @@
 #include <iterator>
 #include <memory> // allocator
 
+#include "../../utils/Math.h"
+
 namespace utd {
 
   template <class T> //, class Allocator = std::allocator<T>>
   class vector {
 
   private:
-    size_t vector_head = 0;
-    size_t vector_size = 0;
-
-    T*           capacity_head = nullptr;
-    size_t       capacity;
-    const size_t capacity_resize_rate = 2;
-    const size_t min_capacity         = 12;
+    size_t                  vector_size   = 0;
+    T*                      capacity_head = nullptr;
+    size_t                  capacity;
+    constexpr static size_t capacity_resize_rate = 2;
+    constexpr static size_t min_capacity         = 12;
 
     void init_capacity(size_t size) {
-      capacity      = max(size, min_capacity);
-      capacity_head = new T[max(size, min_capacity)];
+      if (capacity_head == nullptr) {
+        capacity      = util::max(size, min_capacity);
+        capacity_head = new T[capacity];
+      }
     }
 
-    void init_vector(const size_t size) {
-      if (capacity_head == nullptr)
-        init_capacity(size);
-
-      vector_size = size;
-      vector_head = 0;
-    }
-
-    size_t static min(size_t a, size_t b) {
-      if (a < b)
-        return a;
-      return b;
-    }
-
-    size_t static max(size_t a, size_t b) {
-      if (a > b)
-        return a;
-      return b;
-    }
-
+    void init_vector(const size_t size) { vector_size = size; }
 
   public:
     class VectorEmptyErr {};
@@ -56,15 +39,22 @@ namespace utd {
 
     // Constructors
     // TODO: list initialiser
-    vector() { init_vector(0); }
+    vector() {
+      init_capacity(0);
+      init_vector(0);
+    }
 
-    vector(size_t size) { init_vector(size); }
+    vector(size_t size) {
+      init_capacity(size);
+      init_vector(size);
+    }
 
     vector(size_t size, const T const_val) {
+      init_capacity(size);
       init_vector(size);
 
       for (int i = 0; i < size; i++) {
-        capacity_head[vector_head + i] = const_val;
+        capacity_head[i] = const_val;
       }
     }
 
@@ -84,6 +74,7 @@ namespace utd {
 
     // copy constructor
     vector(vector& target_vector) {
+      init_capacity(0);
       init_vector(0);
 
       for (int i = 0; i < target_vector.size(); i++) {
@@ -94,39 +85,51 @@ namespace utd {
     // move constructor
     // TODO: steal the resources
     vector(vector&& target_vector) {
-      init_vector(0);
+      init_capacity(target_vector.capacity);
+      init_vector(this->vector_size);
 
-      for (int i = 0; i < target_vector.size(); i++)
-        push_back(target_vector[i]);
+      this->capacity_head = target_vector.capacity_head;
+      this->vector_size   = target_vector.vector_size;
 
-      target_vector.clear();
+      target_vector.capacity_head = nullptr;
+      target_vector.vector_size   = 0;
+      target_vector.capacity      = 0;
     };
 
     // Methods
     void push_back(T new_item) {
-      if (vector_head + vector_size == capacity) {
+      if (vector_size == capacity) {
         reserve(capacity * capacity_resize_rate);
       }
 
-      capacity_head[vector_head + vector_size] = new_item;
+      capacity_head[vector_size] = new_item;
       vector_size++;
     };
 
     size_t size() { return vector_size; };
 
-    T* begin() { return capacity_head + vector_head; }
+    size_t size() const { return vector_size; };
+
+    T* begin() { return capacity_head; }
 
     T* end() {
-      return vector_size > 0 ? capacity_head + vector_head + vector_size - 1 :
-                               capacity_head + vector_head;
+      return vector_size > 0 ? capacity_head + vector_size - 1 : capacity_head;
     }
 
     void pop() {
       if (vector_size == 0)
         throw VectorEmptyErr();
 
+      T* new_capacity_head = new T[capacity];
+
+      memcpy(new_capacity_head,
+             capacity_head + 1,
+             sizeof(T) * util::min(vector_size, capacity));
+
+      delete[] capacity_head;
+
+      capacity_head = new_capacity_head;
       vector_size--;
-      vector_head++;
     }
 
     void pop_back() {
@@ -142,7 +145,7 @@ namespace utd {
         throw IdxOutOfRange();
       }
 
-      return capacity_head[vector_head + idx];
+      return capacity_head[idx];
     }
 
     // TODO: does clear resizes the inner array
@@ -155,34 +158,28 @@ namespace utd {
       if (new_capacity == capacity)
         return;
 
-      T* new_capacity_head;
-      // TODO: undefined behaviour, will it actually throw if memory alloc fails
-      // TODO: Do we need this ?
-      if (nullptr == (new_capacity_head = new T[new_capacity])) {
-        throw ResizeCapacityErr();
-      }
+      T* new_capacity_head = new T[new_capacity];
 
       memcpy(new_capacity_head,
-             capacity_head + vector_head,
-             sizeof(T) * min(vector_size, new_capacity));
+             capacity_head,
+             sizeof(T) * util::min(vector_size, new_capacity));
 
       delete[] capacity_head;
 
       capacity_head = new_capacity_head;
       capacity      = new_capacity;
-      vector_head   = 0;
-      vector_size   = min(vector_size, new_capacity);
+      vector_size   = util::min(vector_size, new_capacity);
     }
 
     void resize(size_t new_size) {
       // delete everything after new_size
       if (new_size < vector_size) {
-        memset(capacity_head + vector_head + vector_size,
+        memset(capacity_head + vector_size,
                0,
                sizeof(T) * (vector_size - new_size));
 
         vector_size = new_size;
-        if (vector_size * 2 < capacity) {
+        if (vector_size * capacity_resize_rate < capacity) {
           reserve((capacity + 1) / capacity_resize_rate);
         }
       } else if (new_size > vector_size) {
@@ -204,7 +201,7 @@ namespace utd {
       if (index >= vector_size || index < 0)
         throw IdxOutOfRange();
 
-      return capacity_head[vector_head + index];
+      return capacity_head[index];
     };
   };
 
