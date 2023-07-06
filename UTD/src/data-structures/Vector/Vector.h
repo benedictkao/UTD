@@ -21,10 +21,8 @@ namespace utd {
     constexpr static size_t min_capacity         = 12;
 
     void init_capacity(size_t size) {
-      if (capacity_head == nullptr) {
-        capacity      = util::max(size, min_capacity);
-        capacity_head = new T[capacity];
-      }
+      capacity      = util::max(size, min_capacity);
+      capacity_head = new T[capacity];
     }
 
     void init_vector(const size_t size) { vector_size = size; }
