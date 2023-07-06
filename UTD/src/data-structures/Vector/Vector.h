@@ -85,7 +85,6 @@ namespace utd {
     // move constructor
     // TODO: steal the resources
     vector(vector&& target_vector) {
-      init_capacity(target_vector.capacity);
       init_vector(this->vector_size);
 
       this->capacity_head = target_vector.capacity_head;
@@ -122,14 +121,12 @@ namespace utd {
 
       T* new_capacity_head = new T[capacity];
 
-      memcpy(new_capacity_head,
-             capacity_head + 1,
-             sizeof(T) * util::min(vector_size, capacity));
+      vector_size--;
+      memcpy(new_capacity_head, capacity_head + 1, sizeof(T) * vector_size);
 
       delete[] capacity_head;
 
       capacity_head = new_capacity_head;
-      vector_size--;
     }
 
     void pop_back() {
@@ -160,15 +157,14 @@ namespace utd {
 
       T* new_capacity_head = new T[new_capacity];
 
-      memcpy(new_capacity_head,
-             capacity_head,
-             sizeof(T) * util::min(vector_size, new_capacity));
+      vector_size = util::min(vector_size, new_capacity);
+
+      memcpy(new_capacity_head, capacity_head, sizeof(T) * vector_size);
 
       delete[] capacity_head;
 
       capacity_head = new_capacity_head;
       capacity      = new_capacity;
-      vector_size   = util::min(vector_size, new_capacity);
     }
 
     void resize(size_t new_size) {
