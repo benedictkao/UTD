@@ -32,6 +32,7 @@ utd::string& utd::string::operator=(const utd::string& s)
 {
 	str_size = s.str_size;
 	arr_size = s.arr_size;
+    delete[] inner_array;
 	inner_array = new char[arr_size];
 	strcpy(inner_array, s.inner_array);
 	return *this;
@@ -41,6 +42,7 @@ utd::string& utd::string::operator=(utd::string&& s) noexcept
 {
 	str_size = s.str_size;
 	arr_size = s.arr_size;
+    delete[] inner_array;
 	inner_array = s.inner_array;
 	s.inner_array = nullptr;
 	s.str_size = 0;
