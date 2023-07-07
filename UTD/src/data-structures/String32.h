@@ -5,13 +5,14 @@
 
 namespace utd {
 	class string32 {
+  public:
+          enum STRING_TYPE { SMALL = '\0', LARGE };
+
 	private:
 		char* _data;
 		uint64_t _size;
 		uint64_t _capacity;
 		uint64_t _unused = 0;
-
-		enum STRING_TYPE { SMALL = '\0', LARGE };
 
 		uint8_t& getStringTypeFlag();
 
@@ -46,6 +47,8 @@ namespace utd {
 		void reserve(uint64_t);
 
 		char& operator [](uint64_t);
+
+        const char& operator[](uint64_t) const;
 
 		string32 operator+(const string32&) const;
 

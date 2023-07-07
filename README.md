@@ -12,34 +12,37 @@ Collaborators: Ben, Chris
 **Further Notes** ( TO BE REMOVED ): https://docs.google.com/document/d/10WjLhU_cxeN_wvX2Q9tp6nzZyLks1j78UNoN0ND10WI/edit
 
 
-### Dependencies
+## Dependencies
 
 (WIP)
 
 
-### Google Tests Guide
+## Google Tests Guide
 
 - https://google.github.io/googletest/primer.html
 
-### How to Run In Windows
-1. Navigate to source directory (UTD folder)
-2. If you don't already have a build folder, create one, otherwise skip to step 3
+
+## How to Run In Windows
+
+### With Visual Studio
+This project is fully supported in Visual Studio and it should detect the build configurations from the `CMakePresets.json` file.
+This allows you to run the different configurations directly from the Visual Studio GUI.
+
+### From Terminal
+1. Navigate to the output directory
+2. Run cmake to generate the Makefile:
 ```
-mkdir build
+cmake {source folder dir} -G {build tool}
 ```
-3. Navigate to the build folder
-```
-cd build
-```
-4. Run cmake to generate the Makefile
+Example if your output directory is in the source directory and you want to use NMAKE as the build tool:
 ```
 cmake .. -G "Nmake Makefiles"
 ```
-5. Run nmake to build the executables from the Makefile
+3. Run the build tool to build the executables from the Makefile (In this example, using NMAKE):
 ```
 nmake
 ```
-6. Run the executable. Ex:
+4. Run the executable. Ex:
 ```
 UTD
 ```

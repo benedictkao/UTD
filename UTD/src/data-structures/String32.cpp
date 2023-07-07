@@ -2,6 +2,8 @@
 
 #include <cstring>
 
+using StrType = utd::string32::STRING_TYPE;
+
 /*
 * Size of string is 32:
 * 
@@ -16,7 +18,7 @@
 * - 8 bytes for size
 * - 16 bytes for char array (last element must be null terminator)
 */
-constexpr uint8_t SMALL_STRING_MAX_LENGTH = 15;
+static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
 
 // Private Methods
 
@@ -32,11 +34,10 @@ uint8_t& utd::string32::getStringTypeFlag() const
 
 bool utd::string32::isLargeString() const
 {
-	return getStringTypeFlag() & STRING_TYPE::LARGE;
+        return getStringTypeFlag() & StrType::LARGE;
 }
 
-void utd::string32::setType(utd::string32::STRING_TYPE type)
-{
+void utd::string32::setType(StrType type) {
 	getStringTypeFlag() = type;
 }
 
@@ -58,7 +59,7 @@ utd::string32::string32(const char* s)
 	{
 		_capacity = _size + 1;
 		_data = new char[_capacity];
-		setType(utd::string32::STRING_TYPE::LARGE);
+                setType(StrType::LARGE);
 	}
 	else 
 	{
@@ -196,7 +197,7 @@ void utd::string32::reserve(uint64_t n)
 	_data = new_data;
 	*(_data + _size) = 0;	// regenerate the null terminator
 
-	setType(utd::string32::STRING_TYPE::LARGE);
+	setType(StrType::LARGE);
 }
 
 // Operators
@@ -204,6 +205,10 @@ void utd::string32::reserve(uint64_t n)
 char& utd::string32::operator[](uint64_t index)
 {
 	return _data[index];
+}
+
+const char& utd::string32::operator[](uint64_t index) const {
+        return _data[index];
 }
 
 utd::string32 utd::string32::operator+(const utd::string32& rhs) const
@@ -215,7 +220,7 @@ utd::string32 utd::string32::operator+(const utd::string32& rhs) const
 	{
 		lhs._capacity = lhs._size + 1;
 		lhs._data = new char[_capacity];
-		lhs.setType(utd::string32::STRING_TYPE::LARGE);
+                lhs.setType(StrType::LARGE);
 	}
 	else
 	{
@@ -226,10 +231,27 @@ utd::string32 utd::string32::operator+(const utd::string32& rhs) const
 	return lhs;
 }
 
-utd::string32& utd::string32::operator+=(const utd::string32& rhs)
-{
-	// TODO: implement
-	return *this;
+utd::string32& utd::string32::operator+=(const utd::string32& rhs) {
+        const uint64_t new_size = _size + rhs._size;
+        if (isLargeString()) {
+                if (new_size >= _capacity) {
+                  _capacity = new_size + 1;
+                  char* new_data = new char[_capacity];
+                  strcpy(new_data, _data);
+                  delete[] _data;
+                  _data = new_data;
+                }
+        } else if (new_size > SMALL_STRING_MAX_LENGTH) {
+                const uint64_t new_capacity = new_size + 1;
+                char*          new_data     = new char[new_capacity];
+                strcpy(new_data, _data);
+                _data     = new_data;
+                _capacity = new_capacity;
+                setType(StrType::LARGE);
+        }
+        strcpy(_data + _size, rhs._data);
+        _size = new_size;
+		return *this;
 }
 
 utd::string32 utd::string32::operator+(const char& rhs) const
@@ -241,7 +263,7 @@ utd::string32 utd::string32::operator+(const char& rhs) const
 	{
 		lhs._capacity = lhs._size + 1;
 		lhs._data = new char[_capacity];
-		lhs.setType(utd::string32::STRING_TYPE::LARGE);
+                lhs.setType(StrType::LARGE);
 	}
 	else
 	{
@@ -253,10 +275,27 @@ utd::string32 utd::string32::operator+(const char& rhs) const
 	return lhs;
 }
 
-utd::string32& utd::string32::operator+=(const char& rhs)
-{
-	// TODO: implement
-	return *this;
+utd::string32& utd::string32::operator+=(const char& rhs) {
+        _size++;
+        if (isLargeString()) {
+                if (_size == _capacity) {
+                  _capacity++;
+                  char* new_data = new char[_capacity];
+                  strcpy(new_data, _data);
+                  delete[] _data;
+                  _data = new_data;
+                }
+        } else if (_size > SMALL_STRING_MAX_LENGTH) {
+                const uint64_t new_capacity = _size + 1;
+                char*          new_data     = new char[new_capacity];
+                strcpy(new_data, _data);
+                _data     = new_data;
+                _capacity = new_capacity;
+                setType(StrType::LARGE);
+        }
+        *(_data + this->_size) = rhs;			// replace null termination with rhs char
+        *(_data + this->_size + 1) = 0;			// add back null termination
+        return *this;
 }
 
 bool utd::operator==(const string32& lhs, const string32& rhs)
