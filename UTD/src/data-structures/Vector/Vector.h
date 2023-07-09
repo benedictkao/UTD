@@ -21,7 +21,7 @@ namespace utd {
     constexpr static size_t min_capacity         = 12;
 
     void init_capacity(size_t size) {
-      capacity      = util::max(size, min_capacity);
+      capacity      = utd::max(size, min_capacity);
       capacity_head = new T[capacity];
     }
 
@@ -144,10 +144,7 @@ namespace utd {
     }
 
     // TODO: does clear resizes the inner array
-    void clear() {
-      memset(capacity_head, 0, sizeof(T) * capacity);
-      init_vector(0);
-    }
+    void clear() { init_vector(0); }
 
     void reserve(size_t new_capacity) {
       if (new_capacity == capacity)
@@ -155,7 +152,7 @@ namespace utd {
 
       T* new_capacity_head = new T[new_capacity];
 
-      vector_size = util::min(vector_size, new_capacity);
+      vector_size = utd::min(vector_size, new_capacity);
 
       memcpy(new_capacity_head, capacity_head, sizeof(T) * vector_size);
 
@@ -168,10 +165,6 @@ namespace utd {
     void resize(size_t new_size) {
       // delete everything after new_size
       if (new_size < vector_size) {
-        memset(capacity_head + vector_size,
-               0,
-               sizeof(T) * (vector_size - new_size));
-
         vector_size = new_size;
         if (vector_size * capacity_resize_rate < capacity) {
           reserve((capacity + 1) / capacity_resize_rate);

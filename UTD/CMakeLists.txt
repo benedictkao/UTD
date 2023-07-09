@@ -27,6 +27,11 @@ add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
 target_sources(string PRIVATE src/data-structures/String.cpp src/data-structures/String32.cpp)
 
+### Math
+add_library(math SHARED)
+set_target_properties(math PROPERTIES CXX_STANDARD 20)
+target_sources(math PRIVATE src/utils/Math.cpp)
+
 # Build 
 add_executable (UTD)
 set_property(TARGET UTD PROPERTY CXX_STANDARD 20)
@@ -54,5 +59,5 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 add_executable(vector_tests tests/vector_tests/vector_tests.cpp)
 set_property(TARGET vector_tests PROPERTY CXX_STANDARD 20)
-target_link_libraries(vector_tests gtest_main)
+target_link_libraries(vector_tests gtest_main math)
 gtest_discover_tests(vector_tests)
