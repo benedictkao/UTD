@@ -42,8 +42,17 @@ target_link_libraries(UTD_test PRIVATE timer string)
 add_test(NAME Test_1 COMMAND UTD_test)
 
 # G Tests
-# include(GoogleTest)
-# add_executable(vector_tests tests/vector_tests/vector_tests.cpp)
-# set_property(TARGET vector_tests PROPERTY CXX_STANDARD 20)
-# target_link_libraries(vector_tests gtest_main)
-# gtest_discover_tests(vector_tests)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/be03d00f5f0cc3a997d1a368bee8a1fe93651f48.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+include(GoogleTest)
+add_executable(vector_tests tests/vector_tests/vector_tests.cpp)
+set_property(TARGET vector_tests PROPERTY CXX_STANDARD 20)
+target_link_libraries(vector_tests gtest_main)
+gtest_discover_tests(vector_tests)
