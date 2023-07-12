@@ -1,11 +1,11 @@
-﻿#include "Demo.h"
+﻿#include "demo.h"
 
 #include <iostream>
 
-#include "../data-structures/Array.h"
-#include "../data-structures/String.h"
-#include "../data-structures/String32.h"
-#include "../utils/Timer.h"
+#include "../data-structures/array.h"
+#include "../data-structures/string.h"
+#include "../data-structures/string32.h"
+#include "../utils/timer.h"
 
 static constexpr char LINE_BRK{ '\n' };
 

@@ -4,23 +4,31 @@
 #include <iostream>
 
 namespace utd {
+
 	class string32 {
-  public:
-          enum STRING_TYPE { SMALL = '\0', LARGE };
-
+	public:
+   
 	private:
-		char* _data;
-		uint64_t _size;
-		uint64_t _capacity;
-		uint64_t _unused = 0;
+          struct str_flags {
+          public:
+            bool isLargeString = false;
 
-		uint8_t& getStringTypeFlag();
+		  private:
+            bool _unused_flags[7] = { false };	// TODO: where can this const variable be declared?
+          };
 
-		uint8_t& getStringTypeFlag() const;
 
-		bool isLargeString() const;
-
-		void setType(STRING_TYPE);
+          char*            _data;
+          uint64_t         _size;
+          uint64_t         _capacity;
+          char             _char_buffer[7];
+          str_flags        _flags;
+		  
+		  bool isLargeString() const;
+		  
+		  void setLargeString();
+		  
+		  void pointToInSituMemory();
 
 	public:
 

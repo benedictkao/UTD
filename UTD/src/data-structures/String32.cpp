@@ -1,8 +1,6 @@
-#include "String32.h"
+#include "string32.h"
 
 #include <cstring>
-
-using StrType = utd::string32::STRING_TYPE;
 
 /*
 * Size of string is 32:
@@ -22,123 +20,102 @@ static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
 
 // Private Methods
 
-uint8_t& utd::string32::getStringTypeFlag()
-{
-	return *((uint8_t*)(&_capacity) + SMALL_STRING_MAX_LENGTH);	// TODO: consider using reinterpret_cast
+bool utd::string32::isLargeString() const {
+        return _flags.isLargeString;
 }
 
-uint8_t& utd::string32::getStringTypeFlag() const
-{
-	return *((uint8_t*)(&_capacity) + SMALL_STRING_MAX_LENGTH);	// TODO: consider using reinterpret_cast with const_cast
+void utd::string32::setLargeString() {
+        _flags.isLargeString = true;
 }
 
-bool utd::string32::isLargeString() const
-{
-        return getStringTypeFlag() & StrType::LARGE;
-}
-
-void utd::string32::setType(StrType type) {
-	getStringTypeFlag() = type;
+/*
+* For small strings, _capacity, _char_buffer and _flags are used to store the character data
+* Since last character of a string is always null (0), the last byte is guaranteed to either be unused or have value of zero.
+* Thus, all flag values in _flags have to be false when it is a small string
+*/
+void utd::string32::pointToInSituMemory() {
+        _data = (char*) &_capacity;
 }
 
 
 // Constructors
 
-utd::string32::string32()
-{
-	// TODO: can we improve this by using a global variable for the empty string?
-	_size = 0;
-	_capacity = 0;
-	_data = (char*)&_capacity;
+utd::string32::string32() {
+        // TODO: can we improve this by using a global variable for the empty string?
+        _size     = 0;
+        _capacity = 0;
+        pointToInSituMemory();
 }
 
-utd::string32::string32(const char* s)
-{
-	_size = strlen(s);
-	if (_size > SMALL_STRING_MAX_LENGTH) 
-	{
-		_capacity = _size + 1;
-		_data = new char[_capacity];
-                setType(StrType::LARGE);
-	}
-	else 
-	{
-		_data = (char*) &_capacity;
-	}
-	strcpy(_data, s);
+utd::string32::string32(const char* s) {
+        _size = strlen(s);
+        if (_size > SMALL_STRING_MAX_LENGTH) {
+          _capacity = _size + 1;
+          _data     = new char[_capacity];
+          setLargeString();
+        } else {
+          pointToInSituMemory();
+        }
+        strcpy(_data, s);
 }
 
-utd::string32::string32(const string32& s)
-{ 
-	_size = s._size;
-	_capacity = s._capacity;
-	if (_size > SMALL_STRING_MAX_LENGTH)
-	{
-		_data = new char[_capacity];
-	}
-	else
-	{
-		_data = (char*)&_capacity;
-	}
-    strcpy(_data, s._data);
+utd::string32::string32(const string32& s) {
+        _size     = s._size;
+        _capacity = s._capacity;
+        if (_size > SMALL_STRING_MAX_LENGTH) {
+          _data = new char[_capacity];
+        } else {
+          pointToInSituMemory();
+        }
+        strcpy(_data, s._data);
 }
 
 utd::string32::string32(string32&& s) noexcept
 {
-	_size = s._size;
-    _capacity = s._capacity;
-    if (_size > SMALL_STRING_MAX_LENGTH)
-	{
-		_data = s._data;
-    }
-	else
-	{
-		_data = (char*)&_capacity;
-        strcpy(_data, s._data);
-    }
-
-    s._data = nullptr;
-	s._size = 0;
-    s._capacity = 0;
+        _size     = s._size;
+        _capacity = s._capacity;
+        if (_size > SMALL_STRING_MAX_LENGTH) {
+          _data = s._data;
+        } else {
+          pointToInSituMemory();
+          strcpy(_data, s._data);
+        }
+        
+        s._data     = nullptr;
+        s._size     = 0;
+        s._capacity = 0;
 }
 
-utd::string32& utd::string32::operator=(const string32& s) 
+utd::string32& utd::string32::operator=(const string32& s)
 {
-    if (_size > SMALL_STRING_MAX_LENGTH)
-	{
+    if (_size > SMALL_STRING_MAX_LENGTH) {
         delete[] _data;
     }
-    _size = s._size;
+    _size     = s._size;
     _capacity = s._capacity;
+    _flags    = s._flags;
 
-	if (_size > SMALL_STRING_MAX_LENGTH)
-	{
+	if (_size > SMALL_STRING_MAX_LENGTH) {
         _data = new char[_capacity];
+    } else {
+        pointToInSituMemory();
     }
-	else
-	{
-        _data = (char*)&_capacity;
-    }
-    strcpy(_data, s._data);
     return *this;
 }
 
 utd::string32& utd::string32::operator=(string32&& s) noexcept 
 {
-    if (_size > SMALL_STRING_MAX_LENGTH)
-	{
+    if (_size > SMALL_STRING_MAX_LENGTH) {
         delete[] _data;
     }
-    _size = s._size;
+    _size     = s._size;
     _capacity = s._capacity;
-    if (_size > SMALL_STRING_MAX_LENGTH)
-	{
+    _flags    = s._flags;
+    
+    if (_size > SMALL_STRING_MAX_LENGTH) {
         _data = s._data;
-    }
-	else
-	{
-        _data = (char*)&_capacity;
-        strcpy(_data, s._data);
+    } else {
+        pointToInSituMemory();
     }
 
     s._data = nullptr;
@@ -197,7 +174,7 @@ void utd::string32::reserve(uint64_t n)
 	_data = new_data;
 	*(_data + _size) = 0;	// regenerate the null terminator
 
-	setType(StrType::LARGE);
+	setLargeString();
 }
 
 // Operators
@@ -216,15 +193,12 @@ utd::string32 utd::string32::operator+(const utd::string32& rhs) const
 	utd::string32 lhs;
 	lhs._size = this->_size + rhs._size;
 
-	if (lhs._size > SMALL_STRING_MAX_LENGTH)
-	{
-		lhs._capacity = lhs._size + 1;
-		lhs._data = new char[_capacity];
-                lhs.setType(StrType::LARGE);
-	}
-	else
-	{
-		lhs._data = (char*)&lhs._capacity;
+	if (lhs._size > SMALL_STRING_MAX_LENGTH) {
+                lhs._capacity = lhs._size + 1;
+                lhs._data     = new char[_capacity];
+                lhs.setLargeString();
+	} else {
+                lhs.pointToInSituMemory();
 	}
 	strcpy(lhs._data, this->_data);
 	strcpy(lhs._data + this->_size, rhs._data);
@@ -247,7 +221,7 @@ utd::string32& utd::string32::operator+=(const utd::string32& rhs) {
                 strcpy(new_data, _data);
                 _data     = new_data;
                 _capacity = new_capacity;
-                setType(StrType::LARGE);
+                setLargeString();
         }
         strcpy(_data + _size, rhs._data);
         _size = new_size;
@@ -256,18 +230,18 @@ utd::string32& utd::string32::operator+=(const utd::string32& rhs) {
 
 utd::string32 utd::string32::operator+(const char& rhs) const
 {
-	utd::string32 lhs;
-	lhs._size = this->_size + 1;
+    utd::string32 lhs;
+    lhs._size = this->_size + 1;
 
 	if (lhs._size > SMALL_STRING_MAX_LENGTH)
 	{
-		lhs._capacity = lhs._size + 1;
-		lhs._data = new char[_capacity];
-                lhs.setType(StrType::LARGE);
+                lhs._capacity = lhs._size + 1;
+                lhs._data     = new char[_capacity];
+                lhs.setLargeString();
 	}
 	else
 	{
-		lhs._data = (char*)&lhs._capacity;
+                lhs.pointToInSituMemory();
 	}
 	strcpy(lhs._data, this->_data);
 	*(lhs._data + this->_size) = rhs;			// replace null termination with rhs char
@@ -279,8 +253,7 @@ utd::string32& utd::string32::operator+=(const char& rhs) {
         _size++;
         if (isLargeString()) {
                 if (_size == _capacity) {
-                  _capacity++;
-                  char* new_data = new char[_capacity];
+                  char* new_data = new char[++_capacity];
                   strcpy(new_data, _data);
                   delete[] _data;
                   _data = new_data;
@@ -291,7 +264,7 @@ utd::string32& utd::string32::operator+=(const char& rhs) {
                 strcpy(new_data, _data);
                 _data     = new_data;
                 _capacity = new_capacity;
-                setType(StrType::LARGE);
+                setLargeString();
         }
         *(_data + this->_size) = rhs;			// replace null termination with rhs char
         *(_data + this->_size + 1) = 0;			// add back null termination

@@ -20,31 +20,32 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 ### Timer
 add_library(timer SHARED)
 set_target_properties(timer PROPERTIES CXX_STANDARD 20)
-target_sources(timer PRIVATE src/utils/Timer.cpp)
+target_sources(timer PRIVATE "src/utils/timer.cpp")
 
 ### String
 add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
-target_sources(string PRIVATE src/data-structures/String.cpp src/data-structures/String32.cpp)
+target_sources(string PRIVATE "src/data-structures/string.cpp" "src/data-structures/string32.cpp")
 
 ### Math
 add_library(math SHARED)
 set_target_properties(math PROPERTIES CXX_STANDARD 20)
-target_sources(math PRIVATE src/utils/Math.cpp)
+target_sources(math PRIVATE "src/utils/math.cpp")
 
 # Build 
-add_executable (UTD)
-set_property(TARGET UTD PROPERTY CXX_STANDARD 20)
-target_sources(UTD PRIVATE src/demo/Demo.cpp src/demo/main.cpp) 
-target_link_libraries(UTD PRIVATE timer string)
+add_executable(main)
+set_property(TARGET main PROPERTY CXX_STANDARD 20)
+target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp") 
+target_link_libraries(main PRIVATE timer string)
 
-# Test 
+# Test
 enable_testing()
-add_executable (UTD_test)
-set_property(TARGET UTD_test PROPERTY CXX_STANDARD 20)
-target_sources(UTD_test PRIVATE tests/main.cpp)
-target_link_libraries(UTD_test PRIVATE timer string)
-add_test(NAME Test_1 COMMAND UTD_test)
+add_executable (main_test)
+set_property(TARGET main_test PROPERTY CXX_STANDARD 20)
+target_sources(main_test PRIVATE "tests/main.cpp" "tests/data-structures/vector_test.cpp")
+target_link_libraries(main_test gtest_main math)
+
+add_test(NAME main COMMAND main_test)
 
 # G Tests
 include(FetchContent)
@@ -57,7 +58,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
-add_executable(vector_tests tests/vector_tests/vector_tests.cpp)
-set_property(TARGET vector_tests PROPERTY CXX_STANDARD 20)
-target_link_libraries(vector_tests gtest_main math)
-gtest_discover_tests(vector_tests)
+add_executable(vector_test "tests/data-structures/vector_test.cpp")
+set_property(TARGET vector_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(vector_test gtest_main math)
+gtest_discover_tests(vector_test)
