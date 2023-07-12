@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include <vector>
 
-#include "../../src/data-structures/Vector/Vector.h"
+#include "../../src/data-structures/vector.h"
 
 TEST(Vectors, constructors) {
 
