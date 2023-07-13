@@ -42,7 +42,12 @@ target_link_libraries(main PRIVATE timer string)
 enable_testing()
 add_executable (main_test)
 set_property(TARGET main_test PROPERTY CXX_STANDARD 20)
-target_sources(main_test PRIVATE "tests/main.cpp" "tests/data-structures/vector_test.cpp" "tests/data-structures/string32_test.cpp")
+target_sources(main_test PRIVATE
+    "tests/main.cpp"
+    "tests/data-structures/vector_test.cpp"
+    "tests/data-structures/string32_test.cpp"
+    "tests/data-structures/array_test.cpp"
+)
 target_link_libraries(main_test gtest_main math string)
 
 add_test(NAME main COMMAND main_test)
@@ -66,4 +71,8 @@ add_executable(string32_test "tests/data-structures/string32_test.cpp")
 set_property(TARGET string32_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(string32_test gtest_main string)
 
-gtest_discover_tests(vector_test string32_test)
+add_executable(array_test "tests/data-structures/array_test.cpp")
+set_property(TARGET array_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(array_test gtest_main)
+
+gtest_discover_tests(vector_test string32_test array_test)
