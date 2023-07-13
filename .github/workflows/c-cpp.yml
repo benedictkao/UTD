@@ -28,7 +28,7 @@ jobs:
 
     - name: Configure CMake Windows
       if: "${{ contains(matrix.os, 'windows-latest')}}"
-      run: cmake ${{github.workspace}}/UTD -G "Nmake Makefiles"
+      run: cmake ${{github.workspace}}\UTD -G "Nmake Makefiles"
 
     - name: Build MacOS
       if: "${{ contains(matrix.os, 'macos-latest')}}"
