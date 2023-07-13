@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring> // should this be removed?
 #include <iostream>
 
 namespace utd
@@ -52,3 +53,4 @@ namespace utd
 		friend std::ostream& operator<<(std::ostream& os, const string& s);
 	};
 }
+

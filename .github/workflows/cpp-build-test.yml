@@ -1,0 +1,50 @@
+name: C/C++ Build & Test CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  Test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake MacOS | Ubuntu
+      working-directory: ${{github.workspace}}/UTD
+      if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest') }}"
+      run: cmake -B ${{github.workspace}}/UTD/build 
+
+    - name: Configure CMake Windows
+      working-directory: ${{github.workspace}}/UTD
+      if: "${{ contains(matrix.os, 'windows-latest') }}"
+      run: cmake -B ${{github.workspace}}\UTD\build 
+
+    - name: Build MacOS | Ubuntu
+      working-directory: ${{github.workspace}}/UTD
+      if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest') }}"
+      run: cmake --build ${{github.workspace}}/UTD/build 
+
+    - name: Build Windows
+      working-directory: ${{github.workspace}}/UTD
+      if: "${{ contains(matrix.os, 'windows-latest') }}"
+      run: cmake --build ${{github.workspace}}\UTD\build
+
+    - name: Test MacOS | Ubuntu
+      if: "${{ contains(matrix.os, 'ubuntu-latest') || contains(matrix.os, 'macos-latest') }}"
+      working-directory: ${{github.workspace}}/UTD/build
+      run: ./main_test 
+
+    - name: Test Windows
+      if: "${{ contains(matrix.os, 'windows-latest') }}"
+      working-directory: ${{github.workspace}}\UTD\build\Debug
+      run: ./main_test.exe 

@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "../data-structures/array.h"
-#include "../data-structures/string.h"
 #include "../data-structures/string32.h"
 #include "../utils/timer.h"
 
@@ -20,41 +19,6 @@ static void run_array() {
 
 void demo::time_array() {
     utils::time(run_array);
-}
-
-void demo::demo_string() {
-    utd::string s = "A string";                             // move assignment
-    std::cout << "Init string    : " << s << LINE_BRK;
-
-    utd::string s2 = s;                                     // copy assignment
-    std::cout << "Copy string    : " << s2 << LINE_BRK;
-
-    utd::string s3 = std::move(s);
-    std::cout << "Move string    : " << s3 << LINE_BRK;
-
-    s2[0] = 'a';
-    std::cout << "Change char    : " << s2 << LINE_BRK;
-
-    s = "This is ";                                         // move assignment
-    s3 = s + s2;                                            // move assignment
-    std::cout << "+ string       : " << s3 << LINE_BRK;
-
-    s3 += " demo";
-    std::cout << "+= string      : " << s3 << LINE_BRK;
-
-    s3 = s3 + '?';
-    std::cout << "+ char         : " << s3 << LINE_BRK;
-
-    s3 += '!';
-    std::cout << "+= char        : " << s3 << LINE_BRK;
-
-    s = s3.substr(8, 8);
-    std::cout << "Substring      : " << s << LINE_BRK;
-
-    std::cout << "Comparison 1   : " << s << " == " << s2 << " = " << (s == s2)
-              << LINE_BRK;
-    std::cout << "Comparison 2   : " << s << " == " << s3 << " = " << (s == s3)
-              << LINE_BRK;
 }
 
 void demo::demo_string32() {
