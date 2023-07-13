@@ -27,7 +27,7 @@ jobs:
     - name: Configure CMake Windows
       working-directory: ${{github.workspace}}/UTD
       if: "${{ contains(matrix.os, 'windows-latest') }}"
-      run: cmake -B ${{github.workspace}}/UTD/build 
+      run: cmake -B ${{github.workspace}}\UTD\build 
 
     - name: Build MacOS | Ubuntu
       working-directory: ${{github.workspace}}/UTD
@@ -44,8 +44,8 @@ jobs:
       working-directory: ${{github.workspace}}/UTD/build
       run: ./main_test 
 
-    - name: Windows
+    - name: Test Windows
       if: "${{ contains(matrix.os, 'windows-latest') }}"
-      working-directory: ${{github.workspace}}/UTD/build
+      working-directory: ${{github.workspace}}\UTD\build
       run: ls
 
