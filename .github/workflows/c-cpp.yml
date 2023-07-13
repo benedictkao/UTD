@@ -13,9 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: cmake
-      run: cmake 
-      args: ["."]
+    - name: Create Build Directory
+      run: cmake -E make_directory ${{github.workspace}}/build
+    - name: Configure CMake
+      run: cmake -S .
     - name: make
       run: make
     - name: test 
