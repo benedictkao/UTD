@@ -1,4 +1,4 @@
-#include "Math.h"
+#include "math.h"
 
 size_t utd::min(size_t a, size_t b) {
   if (a < b)
