@@ -34,6 +34,10 @@ jobs:
       if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest')}}"
       run: make
 
+    - name: LIST Windows
+      if: "${{ contains(matrix.os, 'windows-latest')}}"
+      run: ls
+
     - name: Build Windows
       if: "${{ contains(matrix.os, 'windows-latest')}}"
       run: cmake --build ${{github.workspace}}\UTD
