@@ -22,7 +22,7 @@ namespace utd {
             bool _unused_flags[7] = { false };
 
 			public:
-            void reset() { memset((void*) this, 0, 1); }
+            void reset() { isLargeString = false; }
           };
 
 
@@ -56,13 +56,15 @@ namespace utd {
 
 		uint64_t size() const;
 
+		bool empty() const;
+
 		uint64_t capacity() const;
 
 		const char* c_str() const;
 
 		void reserve(uint64_t);
 
-		char& operator [](uint64_t);
+		char& operator[](uint64_t);
 
         const char& operator[](uint64_t) const;
 
@@ -70,9 +72,11 @@ namespace utd {
 
 		string32& operator+=(const string32&);
 
-		string32 operator+(const char&) const;
+		string32 operator+(char) const;
 
-		string32& operator+=(const char&);
+		string32& operator+=(char);
+
+		friend bool operator==(const string32&, const char*);
 
 		friend bool operator==(const string32&, const string32&);
 
