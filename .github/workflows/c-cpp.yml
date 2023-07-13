@@ -48,3 +48,7 @@ jobs:
     - name: Test 
       working-directory: ${{github.workspace}}/UTD/build
       run: ./main_test 
+
+    - name: LIST 
+      working-directory: ${{github.workspace}}/UTD/build
+      run: ls
