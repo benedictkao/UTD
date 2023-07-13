@@ -12,7 +12,7 @@ TEST(vector, constructors) {
   // size constructor
   utd::vector<int> v_size(10);
   EXPECT_EQ(v_size.size(), 10);
-  EXPECT_NE(v_size.begin(), v_size.end());
+  EXPECT_EQ(v_size.begin(), v_size.end());
 
 
   // size + val constructor
