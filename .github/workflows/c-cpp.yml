@@ -31,7 +31,7 @@ jobs:
       run: cmake -S ${{github.workspace}}/UTD
 
     - name: Build MacOS
-      if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latestl)}}"
+      if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest')}}"
       run: make
 
     - name: Build Windows
