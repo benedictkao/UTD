@@ -21,9 +21,18 @@ jobs:
     - uses: actions/checkout@v3
     - name: Change Directory
       run: cd ${{github.workspace}}/UTD
+
     - name: Configure CMake
+      if: "${{ contains(matrix.os, 'macos-latest')"
       run: cmake -S ${{github.workspace}}/UTD
+      if: "${{ contains(matrix.os, 'windows-latest')"
+      run: cmake ${{github.workspace}}/UTD -G "Nmake Makefiles"
+
     - name: Build
+      if: "${{ contains(matrix.os, 'macos-latest')"
       run: make
+      if: "${{ contains(matrix.os, 'windows-latest')"
+      run: nmake
+
     - name: Test 
       run: ./main_test 
