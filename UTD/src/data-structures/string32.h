@@ -9,19 +9,27 @@ namespace utd {
 	public:
    
 	private:
+          /*
+		  * Since last character of a string is always null (0), the last byte is guaranteed to either be unused or have value of zero.
+		  * This leaves us with one byte (8 bits) of memory to use for boolean flags. However, all flag values have to be false when data is stored in-situ
+		  * otherwise the last byte cannot be used as a null terminator if the small string capacity is full
+		  */
           struct str_flags {
           public:
             bool isLargeString = false;
 
 		  private:
-            bool _unused_flags[7] = { false };	// TODO: where can this const variable be declared?
+            bool _unused_flags[7] = { false };
+
+			public:
+            void reset() { memset((void*) this, 0, 1); }
           };
 
 
           char*            _data;
           uint64_t         _size;
           uint64_t         _capacity;
-          char             _char_buffer[7];
+          char             _char_buffer[7] = { 0 };
           str_flags        _flags;
 		  
 		  bool isLargeString() const;

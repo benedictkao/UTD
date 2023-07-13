@@ -1,9 +1,8 @@
 #include "gtest/gtest.h"
-#include <vector>
 
 #include "../../src/data-structures/vector.h"
 
-TEST(Vectors, constructors) {
+TEST(vector, constructors) {
 
   // Empty constructor
   utd::vector<int> v;
@@ -46,7 +45,7 @@ TEST(Vectors, constructors) {
   EXPECT_EQ(*v_move.begin(), *v_move.end());
 }
 
-TEST(Vectors, methodsAndOperators) {
+TEST(vector, methodsAndOperators) {
   utd::vector<int> v;
   size_t           v_size = 100;
 
@@ -118,7 +117,7 @@ TEST(Vectors, methodsAndOperators) {
 }
 
 
-TEST(Vectors, exceptions) {
+TEST(vector, exceptions) {
   EXPECT_THROW(
     {
       utd::vector<int> v(10, 10);

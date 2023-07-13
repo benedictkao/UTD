@@ -18,6 +18,8 @@
 */
 static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
 
+static constexpr size_t CHAR_BUFFER_SIZE{ 7 };
+
 // Private Methods
 
 bool utd::string32::isLargeString() const {
@@ -29,9 +31,7 @@ void utd::string32::setLargeString() {
 }
 
 /*
-* For small strings, _capacity, _char_buffer and _flags are used to store the character data
-* Since last character of a string is always null (0), the last byte is guaranteed to either be unused or have value of zero.
-* Thus, all flag values in _flags have to be false when it is a small string
+* For small strings, _capacity, _char_buffer and _flags are used to store the character data and null terminator
 */
 void utd::string32::pointToInSituMemory() {
         _data = (char*) &_capacity;
@@ -62,55 +62,61 @@ utd::string32::string32(const char* s) {
 utd::string32::string32(const string32& s) {
         _size     = s._size;
         _capacity = s._capacity;
+        memcpy(_char_buffer, s._char_buffer, CHAR_BUFFER_SIZE);
+        _flags = s._flags;
         if (_size > SMALL_STRING_MAX_LENGTH) {
           _data = new char[_capacity];
+          strcpy(_data, s._data);
         } else {
           pointToInSituMemory();
         }
-        strcpy(_data, s._data);
 }
 
-utd::string32::string32(string32&& s) noexcept
-{
+utd::string32::string32(string32&& s) noexcept {
         _size     = s._size;
         _capacity = s._capacity;
+        memcpy(_char_buffer, s._char_buffer, CHAR_BUFFER_SIZE);
+        _flags = s._flags;
+
         if (_size > SMALL_STRING_MAX_LENGTH) {
           _data = s._data;
         } else {
           pointToInSituMemory();
-          strcpy(_data, s._data);
         }
         
         s._data     = nullptr;
         s._size     = 0;
         s._capacity = 0;
+        memset(s._char_buffer, 0, CHAR_BUFFER_SIZE);
+        s._flags.reset();
 }
 
-utd::string32& utd::string32::operator=(const string32& s)
-{
+utd::string32& utd::string32::operator=(const string32& s) {
     if (_size > SMALL_STRING_MAX_LENGTH) {
         delete[] _data;
     }
     _size     = s._size;
     _capacity = s._capacity;
-    _flags    = s._flags;
+    memcpy(_char_buffer, s._char_buffer, CHAR_BUFFER_SIZE);
+    _flags = s._flags;
 
 	if (_size > SMALL_STRING_MAX_LENGTH) {
         _data = new char[_capacity];
+        strcpy(_data, s._data);
     } else {
         pointToInSituMemory();
     }
     return *this;
 }
 
-utd::string32& utd::string32::operator=(string32&& s) noexcept 
-{
+utd::string32& utd::string32::operator=(string32&& s) noexcept {
     if (_size > SMALL_STRING_MAX_LENGTH) {
         delete[] _data;
     }
     _size     = s._size;
     _capacity = s._capacity;
-    _flags    = s._flags;
+    memcpy(_char_buffer, s._char_buffer, CHAR_BUFFER_SIZE);
+    _flags = s._flags;
     
     if (_size > SMALL_STRING_MAX_LENGTH) {
         _data = s._data;
@@ -121,6 +127,8 @@ utd::string32& utd::string32::operator=(string32&& s) noexcept
     s._data = nullptr;
     s._size = 0;
     s._capacity = 0;
+    memset(s._char_buffer, 0, CHAR_BUFFER_SIZE);
+    s._flags.reset();
     return *this;
 }
 

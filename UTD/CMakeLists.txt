@@ -42,12 +42,13 @@ target_link_libraries(main PRIVATE timer string)
 enable_testing()
 add_executable (main_test)
 set_property(TARGET main_test PROPERTY CXX_STANDARD 20)
-target_sources(main_test PRIVATE "tests/main.cpp" "tests/data-structures/vector_test.cpp")
-target_link_libraries(main_test gtest_main math)
+target_sources(main_test PRIVATE "tests/main.cpp" "tests/data-structures/vector_test.cpp" "tests/data-structures/string32_test.cpp")
+target_link_libraries(main_test gtest_main math string)
 
 add_test(NAME main COMMAND main_test)
 
 # G Tests
+include(GoogleTest)
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -57,8 +58,12 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-include(GoogleTest)
 add_executable(vector_test "tests/data-structures/vector_test.cpp")
 set_property(TARGET vector_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(vector_test gtest_main math)
-gtest_discover_tests(vector_test)
+
+add_executable(string32_test "tests/data-structures/string32_test.cpp")
+set_property(TARGET string32_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(string32_test gtest_main string)
+
+gtest_discover_tests(vector_test string32_test)
