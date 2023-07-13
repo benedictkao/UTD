@@ -36,7 +36,7 @@ jobs:
 
     - name: Build Windows
       if: "${{ contains(matrix.os, 'windows-latest')}}"
-      run: make
+      run: cmake --build ${{github.workspace}}\UTD
 
     - name: Test 
       run: ./main_test 
