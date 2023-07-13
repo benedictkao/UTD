@@ -46,6 +46,6 @@ jobs:
 
     - name: Test Windows
       if: "${{ contains(matrix.os, 'windows-latest') }}"
-      working-directory: ${{github.workspace}}\UTD\builda\Debug
+      working-directory: ${{github.workspace}}\UTD\build\Debug
       run: ./main_test.exe 
 
