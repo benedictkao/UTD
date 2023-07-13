@@ -22,8 +22,8 @@ jobs:
     - name: Change Directory
       run: cd ${{github.workspace}}/UTD
 
-    - name: Configure CMake MacOS
-      if: "${{ contains(matrix.os, 'macos-latest')}}"
+    - name: Configure CMake MacOS, Ubuntu
+      if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest')}}"
       run: cmake -S ${{github.workspace}}/UTD
 
     - name: Configure CMake Windows
