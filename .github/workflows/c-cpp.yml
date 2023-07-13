@@ -23,19 +23,19 @@ jobs:
       run: cd ${{github.workspace}}/UTD
 
     - name: Configure CMake MacOS
-      if: "${{ contains(matrix.os, 'macos-latest')"
+      if: "${{ contains(matrix.os, 'macos-latest')}}"
       run: cmake -S ${{github.workspace}}/UTD
 
     - name: Configure CMake Windows
-      if: "${{ contains(matrix.os, 'windows-latest')"
+      if: "${{ contains(matrix.os, 'windows-latest')}}"
       run: cmake ${{github.workspace}}/UTD -G "Nmake Makefiles"
 
     - name: Build MacOS
-      if: "${{ contains(matrix.os, 'macos-latest')"
+      if: "${{ contains(matrix.os, 'macos-latest')}}"
       run: make
 
     - name: Build Windows
-      if: "${{ contains(matrix.os, 'windows-latest')"
+      if: "${{ contains(matrix.os, 'windows-latest')}}"
       run: nmake
 
     - name: Test 
