@@ -16,9 +16,9 @@ jobs:
     - name: Create Build Directory
       run: cmake -E make_directory ${{github.workspace}}/build
     - name: LIS
-      run: ls 
+      run: ls ${{github.workspace}}/UTD
     - name: Configure CMake
-      run: cmake -S ..
+      run: cmake -S ${{github.workspace}}/UTD
     - name: make
       run: make
     - name: test 
