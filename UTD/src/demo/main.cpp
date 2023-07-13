@@ -1,8 +1,8 @@
-#include "Demo.h"
+#include "demo.h"
 
 int main() {
 
-    demo::demo_string32();
+  demo::demo_string32();
 
-    return 0;
+  return 0;
 };
