@@ -46,3 +46,33 @@ nmake
 ```
 UTD
 ```
+
+## How to Run In MacOS | Ubuntu
+
+### From Terminal
+1. Navigate to the project directory
+```
+cd UTD/UTD
+```
+
+2. Run cmake to generate make configurations with ./build/ as output dir
+```
+cmake -B ./build
+```
+
+3. Build the project with ./build/ as output dir
+```
+cmake --build ./build
+```
+
+4. Run the program found in build/ dir
+```
+./build/main
+```
+
+5. (Optional) Delete build
+```
+rm -rf build
+```
+
+
