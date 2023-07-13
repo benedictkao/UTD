@@ -1,5 +1,7 @@
 #include "string32.h"
 
+#include <cstring>
+
 /*
 * Size of string is 32:
 * 
