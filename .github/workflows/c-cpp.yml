@@ -36,7 +36,7 @@ jobs:
 
     - name: Build Windows
       if: "${{ contains(matrix.os, 'windows-latest')}}"
-      run: nmake
+      run: make
 
     - name: Test 
       run: ./main_test 
