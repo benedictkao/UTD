@@ -16,7 +16,7 @@ jobs:
     - name: Create Build Directory
       run: cmake -E make_directory ${{github.workspace}}/build
     - name: Configure CMake
-      run: cmake -S .
+      run: cmake -S ..
     - name: make
       run: make
     - name: test 
