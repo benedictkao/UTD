@@ -6,7 +6,7 @@
 #include <iterator>
 #include <memory> // allocator
 
-#include "../utils/Math.h"
+#include "../utils/math.h"
 
 namespace utd {
 
