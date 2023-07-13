@@ -27,7 +27,12 @@ target_sources(timer PRIVATE "src/utils/timer.cpp")
 ### String
 add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
-target_sources(string PRIVATE "src/data-structures/string32.cpp")
+target_sources(string PRIVATE "src/data-structures/string.cpp")
+
+### String
+add_library(string32 SHARED)
+set_target_properties(string32 PROPERTIES CXX_STANDARD 20)
+target_sources(string32 PRIVATE "src/data-structures/string32.cpp")
 
 ### Math
 add_library(math SHARED)
@@ -43,7 +48,7 @@ target_sources(functional PRIVATE "src/utils/hash.cpp")
 add_executable(main)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
 target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp")
-target_link_libraries(main PRIVATE timer string functional)
+target_link_libraries(main PRIVATE timer string string32 functional)
 
 # Test
 enable_testing()
@@ -57,7 +62,7 @@ target_sources(main_test PRIVATE
     "tests/data-structures/unordered_set_test.cpp"
     "tests/utils/hash_test.cpp"
 )
-target_link_libraries(main_test gtest_main math string functional)
+target_link_libraries(main_test gtest_main math string string32 functional)
 
 add_test(NAME main COMMAND main_test)
 
@@ -68,9 +73,14 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/be03d00f5f0cc3a997d1a368bee8a1fe93651f48.zip
 )
+
+FetchContent_Declare(googlebenchmark
+        GIT_REPOSITORY https://github.com/google/benchmark.git
+        GIT_TAG v1.8.2) # need master for benchmark::benchmark
+
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(googletest googlebenchmark)
 
 add_executable(vector_test "tests/data-structures/vector_test.cpp")
 set_property(TARGET vector_test PROPERTY CXX_STANDARD 20)
@@ -78,7 +88,7 @@ target_link_libraries(vector_test gtest_main math)
 
 add_executable(string32_test "tests/data-structures/string32_test.cpp")
 set_property(TARGET string32_test PROPERTY CXX_STANDARD 20)
-target_link_libraries(string32_test gtest_main string)
+target_link_libraries(string32_test gtest_main string32)
 
 add_executable(array_test "tests/data-structures/array_test.cpp")
 set_property(TARGET array_test PROPERTY CXX_STANDARD 20)
@@ -89,3 +99,17 @@ set_property(TARGET unordered_set_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(unordered_set_test gtest_main functional)
 
 gtest_discover_tests(vector_test string32_test array_test unordered_set_test)
+
+# Benchmark
+add_library(benchmark_helper SHARED)
+set_target_properties(benchmark_helper PROPERTIES CXX_STANDARD 20)
+target_link_libraries(benchmark_helper benchmark::benchmark)
+target_sources(benchmark_helper PRIVATE "benchmarks/helper.cpp")
+
+add_executable(main_string_benchmark "benchmarks/string.cpp")
+set_property(TARGET main_string_benchmark PROPERTY CXX_STANDARD 20)
+target_link_libraries(main_string_benchmark benchmark::benchmark string32 string benchmark_helper)
+
+add_executable(main_vector_benchmark "benchmarks/vector.cpp")
+set_property(TARGET main_vector_benchmark PROPERTY CXX_STANDARD 20)
+target_link_libraries(main_vector_benchmark benchmark::benchmark math benchmark_helper)

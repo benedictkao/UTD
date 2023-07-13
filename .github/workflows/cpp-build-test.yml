@@ -22,7 +22,7 @@ jobs:
     - name: Configure CMake MacOS | Ubuntu
       working-directory: ${{github.workspace}}/UTD
       if: "${{ contains(matrix.os, 'macos-latest') || contains(matrix.os, 'ubuntu-latest') }}"
-      run: cmake -B ${{github.workspace}}/UTD/build 
+      run: cmake -B ${{github.workspace}}/UTD/build -DCMAKE_CXX_FLAGS=-fPIC
 
     - name: Configure CMake Windows
       working-directory: ${{github.workspace}}/UTD
