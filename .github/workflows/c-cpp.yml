@@ -7,19 +7,23 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
-    runs-on: macos-latest 
+  Test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Create Build Directory
-      run: cmake -E make_directory ${{github.workspace}}/build
-    - name: CD
+    - name: Change Directory
       run: cd ${{github.workspace}}/UTD
     - name: Configure CMake
       run: cmake -S ${{github.workspace}}/UTD
-    - name: make
+    - name: Build
       run: make
-    - name: test 
+    - name: Test 
       run: ./main_test 
