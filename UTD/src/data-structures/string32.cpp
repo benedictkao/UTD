@@ -20,14 +20,16 @@ static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
 
 static constexpr size_t CHAR_BUFFER_SIZE{ 7 };
 
+static constexpr uint8_t FLAG_LARGE_STRING{ 0b10000000 };
+
 // Private Methods
 
 bool utd::string32::isLargeString() const {
-  return _flags.isLargeString;
+  return _flags & FLAG_LARGE_STRING;
 }
 
 void utd::string32::setLargeString() {
-  _flags.isLargeString = true;
+  _flags |= FLAG_LARGE_STRING;
 }
 
 /*
@@ -44,6 +46,7 @@ utd::string32::string32() {
   // TODO: can we improve this by using a global variable for the empty string?
   _size     = 0;
   _capacity = 0;
+  _flags    = 0;
   pointToInSituMemory();
 }
 
@@ -54,6 +57,7 @@ utd::string32::string32(const char* s) {
     _data     = new char[_capacity];
     setLargeString();
   } else {
+    _flags = 0;
     pointToInSituMemory();
   }
   strcpy(_data, s);
@@ -88,7 +92,7 @@ utd::string32::string32(string32&& s) noexcept {
   s._size     = 0;
   s._capacity = 0;
   memset(s._char_buffer, 0, CHAR_BUFFER_SIZE);
-  s._flags.reset();
+  s._flags = 0;
 }
 
 utd::string32& utd::string32::operator=(const string32& s) {
@@ -128,7 +132,7 @@ utd::string32& utd::string32::operator=(string32&& s) noexcept {
   s._size     = 0;
   s._capacity = 0;
   memset(s._char_buffer, 0, CHAR_BUFFER_SIZE);
-  s._flags.reset();
+  s._flags = 0;
   return *this;
 }
 
