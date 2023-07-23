@@ -35,7 +35,7 @@ target_sources(math PRIVATE "src/utils/math.cpp")
 # Build 
 add_executable(main)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
-target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp") 
+target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp" "src/utils/hash.cpp") 
 target_link_libraries(main PRIVATE timer string)
 
 # Test
@@ -47,6 +47,8 @@ target_sources(main_test PRIVATE
     "tests/data-structures/vector_test.cpp"
     "tests/data-structures/string32_test.cpp"
     "tests/data-structures/array_test.cpp"
+    "tests/data-structures/unordered_set_test.cpp"
+    "tests/utils/hash_test.cpp"
 )
 target_link_libraries(main_test gtest_main math string)
 
