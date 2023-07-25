@@ -2,7 +2,7 @@
 
 int main() {
 
-    demo::demo_string32();
+    demo::demo_set();
 
     return 0;
 };

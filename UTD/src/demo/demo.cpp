@@ -5,6 +5,7 @@
 #include "../data-structures/array.h"
 #include "../data-structures/string32.h"
 #include "../utils/timer.h"
+#include "../data-structures/unordered_set.h"
 
 static constexpr char LINE_BRK{ '\n' };
 
@@ -45,4 +46,13 @@ void demo::demo_string32() {
     std::cout << "heap string capacity after reserve 15  = " << heap_string.capacity() << LINE_BRK;
     heap_string.reserve(49);
     std::cout << "heap string capacity after reserve 49  = " << heap_string.capacity() << LINE_BRK;
+}
+
+void demo::demo_set() {
+    utd::set<int> s;
+    s.insert(3);
+    s.insert(3);
+    s.insert(2147483647);
+    s.insert(-2147483648);
+    s.print_buckets();
 }
