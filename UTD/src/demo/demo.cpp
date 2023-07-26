@@ -57,8 +57,17 @@ void demo::demo_string32() {
 void demo::demo_set() {
   utd::unordered_set<int> s;
   s.insert(3);
+  s.print_buckets();
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+
   s.insert(3);
+  s.print_buckets();
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+
   s.insert(2147483647);
+  s.print_buckets();
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+
   s.insert(-2147483648);
   s.print_buckets();
   std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
