@@ -16,6 +16,8 @@ project(
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+##include_directories("${PROJECT_SOURCE_DIR}")
+
 # Libs
 ### Timer
 add_library(timer SHARED)
@@ -32,11 +34,16 @@ add_library(math SHARED)
 set_target_properties(math PROPERTIES CXX_STANDARD 20)
 target_sources(math PRIVATE "src/utils/math.cpp")
 
+### Functional
+add_library(functional SHARED)
+set_target_properties(functional PROPERTIES CXX_STANDARD 20)
+target_sources(functional PRIVATE "src/utils/hash.cpp")
+
 # Build 
 add_executable(main)
 set_property(TARGET main PROPERTY CXX_STANDARD 20)
-target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp" "src/utils/hash.cpp") 
-target_link_libraries(main PRIVATE timer string)
+target_sources(main PRIVATE "src/demo/demo.cpp" "src/demo/main.cpp")
+target_link_libraries(main PRIVATE timer string functional)
 
 # Test
 enable_testing()
@@ -50,7 +57,7 @@ target_sources(main_test PRIVATE
     "tests/data-structures/unordered_set_test.cpp"
     "tests/utils/hash_test.cpp"
 )
-target_link_libraries(main_test gtest_main math string)
+target_link_libraries(main_test gtest_main math string functional)
 
 add_test(NAME main COMMAND main_test)
 
@@ -77,4 +84,8 @@ add_executable(array_test "tests/data-structures/array_test.cpp")
 set_property(TARGET array_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(array_test gtest_main)
 
-gtest_discover_tests(vector_test string32_test array_test)
+add_executable(unordered_set_test "tests/data-structures/unordered_set_test.cpp")
+set_property(TARGET unordered_set_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(unordered_set_test gtest_main functional)
+
+gtest_discover_tests(vector_test string32_test array_test unordered_set_test)
