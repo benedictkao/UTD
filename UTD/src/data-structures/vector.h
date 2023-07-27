@@ -2,9 +2,8 @@
 
 #include <cstddef>
 #include <cstring>
-#include <iostream>
-#include <iterator>
-#include <memory> // allocator
+// #include <iterator>
+// #include <memory> // allocator
 
 #include "../utils/math.h"
 
@@ -14,18 +13,19 @@ namespace utd {
   class vector {
 
   private:
-    size_t                  vector_size   = 0;
-    T*                      capacity_head = nullptr;
-    size_t                  capacity;
-    constexpr static size_t capacity_resize_rate = 2;
-    constexpr static size_t min_capacity         = 12;
+    static constexpr size_t DEFAULT_VECTOR_CAPACITY{ 0 };
+    static constexpr int    CAPACITY_RESIZE_RATE{ 2 };
 
-    void init_capacity(size_t size) {
-      capacity      = utd::max(size, min_capacity);
-      capacity_head = new T[capacity];
+    size_t _size;
+    size_t _capacity;
+    T*     _inner_array;
+
+    // TODO: can this be a util method and take in iterator start and end?
+    // Can be reused for set and map
+    void fill(const T& val, size_t start, size_t end) {
+      for (int i = start; i < end; i++)
+        _inner_array[i] = val;
     }
-
-    void init_vector(const size_t size) { vector_size = size; }
 
   public:
     class VectorEmptyErr {};
@@ -33,27 +33,18 @@ namespace utd {
     class IdxOutOfRange {};
 
     // Destructors
-    ~vector() { delete[] capacity_head; }
+    ~vector() { delete[] _inner_array; }
 
     // Constructors
-    // TODO: list initialiser
-    vector() {
-      init_capacity(0);
-      init_vector(0);
-    }
+    vector()
+        : _size(0), _capacity(DEFAULT_VECTOR_CAPACITY), _inner_array(nullptr) {}
 
-    vector(size_t size) {
-      init_capacity(size);
-      init_vector(size);
-    }
+    vector(size_t size)
+        : _size(size), _capacity(size), _inner_array(new T[size]()) {}
 
-    vector(size_t size, const T const_val) {
-      init_capacity(size);
-      init_vector(size);
-
-      for (int i = 0; i < size; i++) {
-        capacity_head[i] = const_val;
-      }
+    vector(size_t size, const T& val)
+        : _size(size), _capacity(size), _inner_array(new T[size]) {
+      fill(val, 0, size);
     }
 
     // NOT WORKING
@@ -71,125 +62,153 @@ namespace utd {
     */
 
     // copy constructor
-    vector(vector& target_vector) {
-      init_capacity(0);
-      init_vector(0);
-
-      for (int i = 0; i < target_vector.size(); i++) {
-        push_back(target_vector[i]);
-      }
+    vector(const vector& target_vector)
+        : _size(target_vector._size)
+        , _capacity(target_vector._capacity)
+        , _inner_array(new T[target_vector._capacity]) {
+      for (int i = 0; i < _capacity; i++)
+        _inner_array[i] = target_vector._inner_array[i];
     };
 
     // move constructor
-    // TODO: steal the resources
-    vector(vector&& target_vector) {
-      init_vector(this->vector_size);
-
-      this->capacity_head = target_vector.capacity_head;
-      this->vector_size   = target_vector.vector_size;
-
-      target_vector.capacity_head = nullptr;
-      target_vector.vector_size   = 0;
-      target_vector.capacity      = 0;
+    vector(vector&& target_vector) noexcept
+        : _size(target_vector._size)
+        , _capacity(target_vector._capacity)
+        , _inner_array(target_vector._inner_array) {
+      target_vector._size        = 0;
+      target_vector._capacity    = 0;
+      target_vector._inner_array = nullptr;
     };
 
-    // Methods
-    void push_back(T new_item) {
-      if (vector_size == capacity) {
-        reserve(capacity * capacity_resize_rate);
-      }
+    // copy assignment
+    vector& operator=(const vector& target_vector) {
+      delete[] _inner_array;
+      _size     = target_vector._size;
+      _capacity = target_vector._capacity;
 
-      capacity_head[vector_size] = new_item;
-      vector_size++;
-    };
-
-    size_t size() { return vector_size; };
-
-    size_t size() const { return vector_size; };
-
-    T* begin() { return capacity_head; }
-
-    T* end() {
-      return vector_size > 0 ? capacity_head + vector_size - 1 : capacity_head;
+      for (int i = 0; i < _size; i++)
+        _inner_array[i] = target_vector._inner_array[i];
+      return *this;
     }
 
+    // move assignment
+    vector& operator=(vector&& target_vector) {
+      delete[] _inner_array;
+      _size        = target_vector._size;
+      _capacity    = target_vector._capacity;
+      _inner_array = target_vector._inner_array;
+
+      target_vector._size        = 0;
+      target_vector._capacity    = 0;
+      target_vector._inner_array = nullptr;
+      return *this;
+    }
+
+    // Methods
+    void push_back(const T& new_item) {
+      if (_size == _capacity) {
+        reserve(utd::max(_capacity, 1) *
+                CAPACITY_RESIZE_RATE); // TODO: fix having to call max
+      }
+
+      _inner_array[_size] = new_item;
+      _size++;
+    };
+
+    void push_back(T&& new_item) {
+      if (_size == _capacity) {
+        reserve(utd::max(_capacity, 1) *
+                CAPACITY_RESIZE_RATE); // TODO: fix having to call max
+      }
+
+      _inner_array[_size] = new_item;
+      _size++;
+    };
+
+    size_t size() const noexcept { return _size; };
+
+    T* begin() { return _inner_array; }
+
+    T* end() { return _size > 0 ? _inner_array + _size - 1 : _inner_array; }
+
+    // This isn't in std lib
     void pop() {
-      if (vector_size == 0)
+      if (_size == 0)
         throw VectorEmptyErr();
 
-      T* new_capacity_head = new T[capacity];
+      T* new_inner_array = new T[_capacity];
 
-      vector_size--;
-      memcpy(new_capacity_head, capacity_head + 1, sizeof(T) * vector_size);
+      _size--;
+      memcpy(new_inner_array, _inner_array + 1, sizeof(T) * _size);
 
-      delete[] capacity_head;
+      delete[] _inner_array;
 
-      capacity_head = new_capacity_head;
+      _inner_array = new_inner_array;
     }
 
     void pop_back() {
-      if (vector_size == 0)
+      if (_size == 0)
         throw VectorEmptyErr();
 
-      vector_size--;
+      _size--;
     }
 
 
     T at(size_t idx) {
-      if (idx < 0 || idx >= vector_size) {
+      if (idx < 0 || idx >= _size) {
         throw IdxOutOfRange();
       }
 
-      return capacity_head[idx];
+      return _inner_array[idx];
     }
 
-    // TODO: does clear resizes the inner array
-    void clear() { init_vector(0); }
+    /*
+     * Does not change the capacity
+     */
+    void clear() { _size = 0; }
 
     void reserve(size_t new_capacity) {
-      if (new_capacity == capacity)
+      if (new_capacity <= _capacity)
         return;
 
-      T* new_capacity_head = new T[new_capacity];
+      T* new_inner_array = new T[new_capacity];
 
-      vector_size = utd::min(vector_size, new_capacity);
+      memcpy(new_inner_array, _inner_array, sizeof(T) * _size);
 
-      memcpy(new_capacity_head, capacity_head, sizeof(T) * vector_size);
+      delete[] _inner_array;
 
-      delete[] capacity_head;
-
-      capacity_head = new_capacity_head;
-      capacity      = new_capacity;
+      _inner_array = new_inner_array;
+      _capacity    = new_capacity;
     }
 
-    void resize(size_t new_size) {
-      // delete everything after new_size
-      if (new_size < vector_size) {
-        vector_size = new_size;
-        if (vector_size * capacity_resize_rate < capacity) {
-          reserve((capacity + 1) / capacity_resize_rate);
-        }
-      } else if (new_size > vector_size) {
-        resize(new_size, 0);
+    void resize(size_t new_capacity) {
+      T default_value = T();
+      resize(new_capacity, default_value);
+    }
+
+    void resize(size_t new_size, const T& value) {
+      if (new_size == _size == _capacity) {
+        return;
       }
-    }
 
-    void resize(size_t new_size, T value) {
-      if (new_size > vector_size) {
-        for (int i = vector_size; i < new_size; i++) {
-          push_back(value);
-        }
-      }
-    }
+      const size_t num_existing = utd::min(_size, new_size);
 
+      T* new_inner_array = new T[new_size];
+      memcpy(new_inner_array, _inner_array, sizeof(T) * num_existing);
+      delete[] _inner_array;
+      _size        = new_size;
+      _capacity    = new_size;
+      _inner_array = new_inner_array;
+
+      fill(value, num_existing, new_size);
+    }
 
     // operators
     T operator[](size_t index) {
-      if (index >= vector_size || index < 0)
+      if (index >= _size || index < 0)
         throw IdxOutOfRange();
 
-      return capacity_head[index];
+      return _inner_array[index];
     };
   };
-
 } // namespace utd
