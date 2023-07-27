@@ -2,7 +2,7 @@
 
 int main() {
 
-    demo::demo_set();
+    demo::demo_array_iterator();
 
     return 0;
 };
