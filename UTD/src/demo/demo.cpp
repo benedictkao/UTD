@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../data-structures/array.h"
+#include "../data-structures/string24.h"
 #include "../data-structures/string32.h"
 #include "../data-structures/unordered_set.h"
 #include "../utils/timer.h"
@@ -109,4 +110,16 @@ void demo::demo_array_iterator() {
   utd::array<int, 5> arr = { 1, 2, 3 };
   for (int i : arr)
     std::cout << i << LINE_BRK;
+}
+
+void demo::demo_string24() {
+  utd::string24  s   = "hello";
+  utd::string24* ptr = &s;
+  std::cout << s.size() << LINE_BRK;
+  std::cout << s << LINE_BRK;
+
+  utd::string24  s2   = "this is a very very long stringggggg";
+  utd::string24* ptr2 = &s2;
+  std::cout << s2.size() << LINE_BRK;
+  std::cout << s2 << LINE_BRK;
 }

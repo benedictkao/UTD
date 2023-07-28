@@ -27,7 +27,7 @@ target_sources(timer PRIVATE "src/utils/timer.cpp")
 ### String
 add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
-target_sources(string PRIVATE "src/data-structures/string.cpp" "src/data-structures/string32.cpp")
+target_sources(string PRIVATE "src/data-structures/string.cpp" "src/data-structures/string32.cpp" "src/data-structures/string24.cpp")
 
 ### Math
 add_library(math SHARED)

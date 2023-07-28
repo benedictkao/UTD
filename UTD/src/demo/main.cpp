@@ -2,7 +2,7 @@
 
 int main() {
 
-    demo::demo_set();
+    demo::demo_string24();
 
     return 0;
 };
