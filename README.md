@@ -74,5 +74,3 @@ cmake --build ./build
 ```
 rm -rf build
 ```
-
-
