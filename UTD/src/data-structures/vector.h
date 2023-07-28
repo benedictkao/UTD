@@ -52,11 +52,7 @@ namespace utd {
 
     T* end();
 
-    // This isn't in std lib
-    void pop();
-
     void pop_back();
-
 
     T at(size_t);
 

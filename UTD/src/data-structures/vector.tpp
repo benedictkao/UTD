@@ -12,7 +12,6 @@ void utd::vector<T>::fill(const T& val, size_t start, size_t end) {
     _inner_array[i] = val;
 }
 
-
 // Destructors
 template <typename T>
 utd::vector<T>::~vector() {
@@ -119,22 +118,6 @@ T* utd::vector<T>::end() {
   return _size > 0 ? _inner_array + _size - 1 : _inner_array;
 }
 
-// This isn't in std lib
-template <typename T>
-void utd::vector<T>::pop() {
-  if (_size == 0)
-    throw VectorEmptyErr();
-
-  T* new_inner_array = new T[_capacity];
-
-  _size--;
-  memcpy(new_inner_array, _inner_array + 1, sizeof(T) * _size);
-
-  delete[] _inner_array;
-
-  _inner_array = new_inner_array;
-}
-
 template <typename T>
 void utd::vector<T>::pop_back() {
   if (_size == 0)
@@ -142,7 +125,6 @@ void utd::vector<T>::pop_back() {
 
   _size--;
 }
-
 
 template <typename T>
 T utd::vector<T>::at(size_t idx) {
