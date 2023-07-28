@@ -14,7 +14,6 @@ TEST(vector, constructors) {
   EXPECT_EQ(v_size.size(), 10);
   EXPECT_NE(v_size.begin(), v_size.end());
 
-
   // size + val constructor
   utd::vector<int> v_size_val(11, 1);
   EXPECT_EQ(v_size_val.size(), 11);
@@ -64,18 +63,6 @@ TEST(vector, methodsAndOperators) {
     EXPECT_EQ(*(v.begin() + i), i);
   }
 
-  // Test Pop
-  int pop_times = 10;
-  while (pop_times > 0) {
-    v.pop();
-    pop_times--;
-    v_size--;
-  }
-  EXPECT_EQ(v.size(), v_size);
-  for (int i = 0; i < v.size(); i++) {
-    EXPECT_EQ(v.at(i), i + 10);
-  }
-
   int pop_back_times = 20;
   while (pop_back_times > 0) {
     v.pop_back();
@@ -84,20 +71,20 @@ TEST(vector, methodsAndOperators) {
   }
   EXPECT_EQ(v.size(), v_size);
   for (int i = 0; i < v.size(); i++) {
-    EXPECT_EQ(v.at(i), i + 10);
+    EXPECT_EQ(v.at(i), i);
   }
 
   v.resize(10);
   EXPECT_EQ(v.size(), 10);
   for (int i = 0; i < v.size(); i++) {
-    EXPECT_EQ(v.at(i), i + 10);
+    EXPECT_EQ(v.at(i), i);
   }
 
   v.resize(20);
   EXPECT_EQ(v.size(), 20);
   for (int i = 0; i < v.size(); i++) {
     if (i < 10) {
-      EXPECT_EQ(v.at(i), i + 10);
+      EXPECT_EQ(v.at(i), i);
     } else {
       EXPECT_EQ(v.at(i), 0);
     }
@@ -107,7 +94,7 @@ TEST(vector, methodsAndOperators) {
   EXPECT_EQ(v.size(), 30);
   for (int i = 0; i < v.size(); i++) {
     if (i < 10) {
-      EXPECT_EQ(v.at(i), i + 10);
+      EXPECT_EQ(v.at(i), i);
     } else if (i < 20) {
       EXPECT_EQ(v.at(i), 0);
     } else {
@@ -132,15 +119,6 @@ TEST(vector, exceptions) {
       v.at(10);
     },
     utd::vector<int>::IdxOutOfRange);
-
-  EXPECT_THROW(
-    {
-      utd::vector<int> v(10, 10);
-      while (true) {
-        v.pop();
-      }
-    },
-    utd::vector<int>::VectorEmptyErr);
 
   EXPECT_THROW(
     {
