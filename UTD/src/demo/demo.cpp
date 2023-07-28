@@ -80,3 +80,9 @@ void demo::demo_set() {
   s.print_buckets();
   std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
 }
+
+void demo::demo_array_iterator() {
+  utd::array<int, 5> arr = { 1, 2, 3 };
+  for (int i : arr)
+    std::cout << i << LINE_BRK;
+}
