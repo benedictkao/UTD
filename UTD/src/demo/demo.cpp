@@ -56,29 +56,53 @@ void demo::demo_string32() {
 
 void demo::demo_set() {
   utd::unordered_set<int> s;
+  std::cout << "Insert 3" << LINE_BRK;
   s.insert(3);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
 
+  std::cout << "Insert 3" << LINE_BRK;
   s.insert(3);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
 
+  std::cout << "Insert 2147483647" << LINE_BRK;
   s.insert(2147483647);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
 
+  std::cout << "Insert -2147483648" << LINE_BRK;
   s.insert(-2147483648);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
 
+  std::cout << "Reserve 14" << LINE_BRK;
   s.reserve(14);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
 
+  std::cout << "Reserve 5" << LINE_BRK;
   s.reserve(5);
   s.print_buckets();
-  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK;
+  std::cout << "Size        : " << s.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s.bucket_count() << LINE_BRK << LINE_BRK;
+
+  auto s2(s);
+  std::cout << "Copy constructor" << LINE_BRK;
+  s2.print_buckets();
+  std::cout << "Size        : " << s2.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s2.bucket_count() << LINE_BRK << LINE_BRK;
+
+  auto s3 = s;
+  std::cout << "Copy assignment" << LINE_BRK;
+  s3.print_buckets();
+  std::cout << "Size        : " << s3.size() << LINE_BRK;
+  std::cout << "Bucket count: " << s3.bucket_count() << LINE_BRK;
 }
 
 void demo::demo_array_iterator() {
