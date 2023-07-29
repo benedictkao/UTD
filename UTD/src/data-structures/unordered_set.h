@@ -7,6 +7,8 @@ namespace utd {
     node<T>* next;
 
     node(const T&);
+
+    node(T&&);
   };
 
   /*
@@ -44,14 +46,24 @@ namespace utd {
 
     void insertElement(node_ptr&, const T&);
 
+    void insertElement(node_ptr&, T&&);
+
     void changeBucketCount(size_t);
+
+    void copyBuckets(const unordered_set&);
 
   public:
     unordered_set();
 
-    ~unordered_set();
+    unordered_set(const unordered_set&);
 
-    // TODO: add copy assignment and move assignment + constructor
+    unordered_set(unordered_set&&);
+
+    unordered_set& operator=(const unordered_set&);
+
+    unordered_set& operator=(unordered_set&&);
+
+    ~unordered_set();
 
     size_t size() const noexcept;
 
@@ -71,9 +83,12 @@ namespace utd {
     /*
      * Creates a copy of the item and inserts it into the set
      */
-    void insert(T);
+    void insert(const T&);
 
-    // TODO: add move insert overload
+    /*
+     * Moves the item into the set
+     */
+    void insert(T&&);
 
     // Test function - remove when done
     void print_buckets();

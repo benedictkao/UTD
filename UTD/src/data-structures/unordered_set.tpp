@@ -1,6 +1,5 @@
 #include "../utils/hash.h"
 #include <cmath>    // TODO: remove this
-#include <cstring>  // need this for memcpy
 #include <iostream> // Remove after testing
 
 constexpr size_t DEFAULT_BUCKET_COUNT{ 1 };
@@ -8,9 +7,10 @@ constexpr int    EXPAND_SIZE_MULTIPLIER{ 2 };
 constexpr float  DEFAULT_MAX_LOAD_FACTOR{ 1.0 };
 
 template <typename T>
-utd::node<T>::node(const T& val) : next(nullptr) {
-  memcpy(&value, &val, sizeof(T));
-}
+utd::node<T>::node(const T& val) : value(val), next(nullptr) {}
+
+template <typename T>
+utd::node<T>::node(T&& val) : value(val), next(nullptr) {}
 
 template <typename T>
 utd::linked_list<T>::linked_list() : head(nullptr) {}
@@ -34,6 +34,51 @@ utd::unordered_set<T>::unordered_set()
 }
 
 template <typename T>
+utd::unordered_set<T>::unordered_set(const unordered_set& s)
+    : _num_elements(s._num_elements)
+    , _bucket_count(s._bucket_count)
+    , _max_load_factor(s._max_load_factor) {
+  copyBuckets(s);
+}
+
+template <typename T>
+utd::unordered_set<T>::unordered_set(unordered_set&& s)
+    : _num_elements(s._num_elements)
+    , _bucket_count(s._bucket_count)
+    , _buckets(s._buckets)
+    , _max_load_factor(s._max_load_factor) {
+  s._num_elements    = 0;
+  s._bucket_count    = 0;
+  s._buckets         = nullptr;
+  s._max_load_factor = 0;
+}
+
+template <typename T>
+utd::unordered_set<T>&
+utd::unordered_set<T>::operator=(const unordered_set& s) {
+  _num_elements    = s._num_elements;
+  _bucket_count    = s._bucket_count;
+  _max_load_factor = s._max_load_factor;
+
+  delete[] _buckets;
+  copyBuckets(s);
+  return *this;
+}
+
+template <typename T>
+utd::unordered_set<T>& utd::unordered_set<T>::operator=(unordered_set&& s) {
+  _num_elements    = s._num_elements;
+  _bucket_count    = s._bucket_count;
+  _buckets         = s._buckets;
+  _max_load_factor = s._max_load_factor;
+
+  s._num_elements    = 0;
+  s._bucket_count    = 0;
+  s._buckets         = nullptr;
+  s._max_load_factor = 0;
+}
+
+template <typename T>
 utd::unordered_set<T>::~unordered_set() {
   for (int i = 0; i < _bucket_count; i++)
     _buckets[i].clear();
@@ -51,7 +96,19 @@ size_t utd::unordered_set<T>::getRequiredBucketCount(size_t size) const {
 template <typename T>
 void utd::unordered_set<T>::insertElement(node_ptr& bucket_node_ref,
                                           const T&  item) {
-  bucket_node_ref = new node(item);
+  bucket_node_ref = new node<T>(item);
+  _num_elements++;
+
+  // check if rehash is needed
+  const size_t req_buckets = getRequiredBucketCount(_num_elements);
+  if (req_buckets > _bucket_count)
+    // TODO: more efficient size increase?
+    changeBucketCount(_bucket_count * EXPAND_SIZE_MULTIPLIER);
+}
+
+template <typename T>
+void utd::unordered_set<T>::insertElement(node_ptr& bucket_node_ref, T&& item) {
+  bucket_node_ref = new node<T>(item);
   _num_elements++;
 
   // check if rehash is needed
@@ -68,11 +125,11 @@ void utd::unordered_set<T>::changeBucketCount(size_t new_bucket_count) {
   // moving data from old buckets to new buckets, can't use memcpy because
   // rehashing is needed
   for (int i = 0; i < _bucket_count; i++) {
-    node_ptr* curr_ptr_addr = &(_buckets[i].head);
+    node_ptr curr_ptr = _buckets[i].head;
 
     // iterate over every node in old bucket
-    while (*curr_ptr_addr) {
-      const size_t hashed_index     = utd::hash<T>((*curr_ptr_addr)->value);
+    while (curr_ptr) {
+      const size_t hashed_index     = utd::hash<T>(curr_ptr->value);
       const size_t new_bucket_index = hashed_index % new_bucket_count;
 
       // get last pointer address of new bucket
@@ -81,10 +138,10 @@ void utd::unordered_set<T>::changeBucketCount(size_t new_bucket_count) {
         last_ptr_addr = &((*last_ptr_addr)->next);
 
       // point last pointer of new bucket to existing node in old bucket
-      *last_ptr_addr = *curr_ptr_addr;
+      *last_ptr_addr = curr_ptr;
 
       // iterate to next node in old bucket
-      curr_ptr_addr = &((*curr_ptr_addr)->next);
+      curr_ptr = curr_ptr->next;
 
       // last node in new bucket should not point to anything
       (*last_ptr_addr)->next = nullptr;
@@ -94,6 +151,21 @@ void utd::unordered_set<T>::changeBucketCount(size_t new_bucket_count) {
   delete[] _buckets;
   _buckets      = new_buckets;
   _bucket_count = new_bucket_count;
+}
+
+template <typename T>
+void utd::unordered_set<T>::copyBuckets(const utd::unordered_set<T>& s) {
+  _buckets = new linked_list<T>[s._bucket_count];
+
+  for (int i = 0; i < s._bucket_count; i++) {
+    node_ptr* target = &(_buckets[i].head);
+    node_ptr  src    = s._buckets[i].head;
+    while (src) {
+      *target = new node<T>(src->value);
+      target  = &((*target)->next);
+      src     = src->next;
+    }
+  }
 }
 
 template <typename T>
@@ -125,7 +197,7 @@ void utd::unordered_set<T>::reserve(size_t size) {
 
 // TODO: should return pair<iterator,bool>
 template <typename T>
-void utd::unordered_set<T>::insert(T item) {
+void utd::unordered_set<T>::insert(const T& item) {
   const size_t    hashed_index = utd::hash<T>(item);
   const size_t    bucket_index = hashed_index % _bucket_count;
   linked_list<T>& bucket       = _buckets[bucket_index];
@@ -148,11 +220,27 @@ void utd::unordered_set<T>::insert(T item) {
   // insertElement(curr_ptr, item);
 }
 
+// TODO: should return pair<iterator,bool>
+template <typename T>
+void utd::unordered_set<T>::insert(T&& item) {
+  const size_t    hashed_index = utd::hash<T>(item);
+  const size_t    bucket_index = hashed_index % _bucket_count;
+  linked_list<T>& bucket       = _buckets[bucket_index];
+
+  node_ptr* curr_ptr_addr = &(bucket.head);
+  while (*curr_ptr_addr) {
+    if ((*curr_ptr_addr)->value == item)
+      return;
+    curr_ptr_addr = &((*curr_ptr_addr)->next);
+  }
+  insertElement(*curr_ptr_addr, item);
+}
+
 template <typename T>
 void utd::unordered_set<T>::print_buckets() {
   std::cout << '[';
   for (int i = 0; i < _bucket_count; i++) {
-    node<T>* curr = _buckets[i].head;
+    node_ptr curr = _buckets[i].head;
     while (curr) {
       std::cout << curr->value << ',';
       curr = curr->next;
