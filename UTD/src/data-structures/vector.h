@@ -15,14 +15,17 @@ namespace utd {
     void fill(const T&, size_t, size_t);
 
   public:
+    typedef T*       iterator;
+    typedef const T* const_iterator;
+
     class VectorEmptyErr {};
     class ResizeCapacityErr {};
     class IdxOutOfRange {};
 
-    // Destructors
+    /* Destructors */
     ~vector();
 
-    // Constructors
+    /* Constructors */
     vector();
 
     vector(size_t);
@@ -41,24 +44,18 @@ namespace utd {
     // move assignment
     vector& operator=(vector&&);
 
-    // Methods
+    /* Methods */
     void push_back(const T&);
 
     void push_back(T&&);
 
     size_t size() const noexcept;
 
-    T* begin();
-
-    T* end();
-
     void pop_back();
 
     T at(size_t);
 
-    /*
-     * Does not change the capacity
-     */
+    // Does not change the capacity
     void clear();
 
     void reserve(size_t);
@@ -67,8 +64,19 @@ namespace utd {
 
     void resize(size_t, const T&);
 
-    // operators
-    T operator[](size_t);
+    /* Operators */
+    T& operator[](size_t);
+
+    const T& operator[](size_t) const;
+
+    /* Iterator */
+    iterator begin() noexcept;
+
+    iterator end() noexcept;
+
+    const_iterator begin() const noexcept;
+
+    const_iterator end() const noexcept;
   };
 } // namespace utd
 
