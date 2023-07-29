@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../utils/math.h"
 #include <cstddef>
 #include <cstring>
+
+#include "../utils/math.h"
 
 // TODO: can this be a util method and take in iterator start and end?
 // Can be reused for set and map
@@ -109,16 +110,6 @@ size_t utd::vector<T>::size() const noexcept {
 };
 
 template <typename T>
-T* utd::vector<T>::begin() {
-  return _inner_array;
-}
-
-template <typename T>
-T* utd::vector<T>::end() {
-  return _size > 0 ? _inner_array + _size - 1 : _inner_array;
-}
-
-template <typename T>
 void utd::vector<T>::pop_back() {
   if (_size == 0)
     throw VectorEmptyErr();
@@ -128,9 +119,8 @@ void utd::vector<T>::pop_back() {
 
 template <typename T>
 T utd::vector<T>::at(size_t idx) {
-  if (idx < 0 || idx >= _size) {
+  if (idx < 0 || idx >= _size)
     throw IdxOutOfRange();
-  }
 
   return _inner_array[idx];
 }
@@ -184,9 +174,37 @@ void utd::vector<T>::resize(size_t new_size, const T& value) {
 
 // operators
 template <typename T>
-T utd::vector<T>::operator[](size_t index) {
+T& utd::vector<T>::operator[](size_t index) {
   if (index >= _size || index < 0)
     throw IdxOutOfRange();
 
   return _inner_array[index];
+};
+
+template <typename T>
+const T& utd::vector<T>::operator[](size_t index) const {
+  if (index >= _size || index < 0)
+    throw IdxOutOfRange();
+
+  return _inner_array[index];
+};
+
+template <typename T>
+typename utd::vector<T>::iterator utd::vector<T>::begin() noexcept {
+  return _inner_array;
+};
+
+template <typename T>
+typename utd::vector<T>::iterator utd::vector<T>::end() noexcept {
+  return _size > 0 ? _inner_array + _size - 1 : _inner_array;
+};
+
+template <typename T>
+typename utd::vector<T>::const_iterator utd::vector<T>::begin() const noexcept {
+  return _inner_array;
+};
+
+template <typename T>
+typename utd::vector<T>::const_iterator utd::vector<T>::end() const noexcept {
+  return _size > 0 ? _inner_array + _size - 1 : _inner_array;
 };
