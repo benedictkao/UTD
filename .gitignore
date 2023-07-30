@@ -374,3 +374,6 @@ Makefile
 
 # Ignores build folders
 build/
+
+# Ignores vs code settings
+.vscode/
