@@ -1,14 +1,19 @@
+#include "./allocator.h"
+
 namespace utd {
-  template <class T> //, class Allocator = std::allocator<T>>
+
+  template <class T, class Allocator = BasicAllocator<T>>
   class vector {
 
   private:
     static constexpr size_t DEFAULT_VECTOR_CAPACITY{ 0 };
     static constexpr int    CAPACITY_RESIZE_RATE{ 2 };
 
-    size_t _size;
-    size_t _capacity;
-    T*     _inner_array;
+
+    Allocator alloc;
+    size_t    _size;
+    size_t    _capacity;
+    T*        _inner_array;
 
     // TODO: can this be a util method and take in iterator start and end?
     // Can be reused for set and map
