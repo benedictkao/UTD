@@ -122,4 +122,8 @@ void demo::demo_string24() {
   utd::string24* ptr2 = &s2;
   std::cout << s2.size() << LINE_BRK;
   std::cout << s2 << LINE_BRK;
+
+  utd::string24 s3;
+  std::cout << s3.size() << LINE_BRK;
+  std::cout << s[0] << ',' << s[1] << LINE_BRK;
 }
