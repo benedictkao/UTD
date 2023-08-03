@@ -32,7 +32,8 @@ utd::string24::char_ref utd::string24::small_string::charAt(size_t index) {
   return _data[index];
 }
 
-utd::string24::const_char_ref utd::string24::small_string::charAt(size_t index) const noexcept {
+utd::string24::const_char_ref
+utd::string24::small_string::charAt(size_t index) const noexcept {
   return _data[index];
 }
 
@@ -52,6 +53,50 @@ utd::string24::string24(c_string c_str) {
     _capacity = _size + 1;
     setLarge();
   }
+}
+
+utd::string24::string24(const_string_ref s) {
+  if (s.isLarge()) {
+    _data = new char[s._capacity];
+    strcpy(_data, s._data);
+  } else {
+    _data = s._data;
+  }
+  memcpy(&_size, &s._size, SIZE_EXLUDING_DATA);
+}
+
+utd::string24::string24(string_r_value s) {
+  memcpy(this, &s, sizeof(string24));
+  s.toSmall()->initEmpty();
+}
+
+utd::string24& utd::string24::operator=(const_string_ref s) {
+  if (isLarge())
+    delete[] _data;
+
+  if (s.isLarge()) {
+    _data = new char[s._capacity];
+    strcpy(_data, s._data);
+  } else {
+    _data = s._data;
+  }
+
+  memcpy(&_size, &s._size, SIZE_EXLUDING_DATA);
+  return *this;
+}
+
+utd::string24& utd::string24::operator=(string_r_value s) {
+  if (isLarge())
+    delete[] _data;
+
+  memcpy(&_size, &s._size, SIZE_EXLUDING_DATA);
+  s.toSmall()->initEmpty();
+  return *this;
+}
+
+utd::string24::~string24() {
+  if (isLarge())
+    delete[] _data;
 }
 
 size_t utd::string24::size() const noexcept {

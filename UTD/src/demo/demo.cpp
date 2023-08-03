@@ -113,17 +113,26 @@ void demo::demo_array_iterator() {
 }
 
 void demo::demo_string24() {
-  utd::string24  s   = "hello";
-  utd::string24* ptr = &s;
-  std::cout << s.size() << LINE_BRK;
+  utd::string24 s = "hello";
+  std::cout << s[0] << ',' << s[1] << LINE_BRK;
   std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
 
-  utd::string24  s2   = "this is a very very long stringggggg";
-  utd::string24* ptr2 = &s2;
-  std::cout << s2.size() << LINE_BRK;
+  utd::string24 s2 = "this is a very very long stringggggg";
   std::cout << s2 << LINE_BRK;
+  std::cout << s2.size() << LINE_BRK;
 
   utd::string24 s3;
   std::cout << s3.size() << LINE_BRK;
-  std::cout << s[0] << ',' << s[1] << LINE_BRK;
+  s3 = s;
+  std::cout << s3 << LINE_BRK;
+  std::cout << s3.size() << LINE_BRK;
+  s3 = s2;
+  std::cout << s3 << LINE_BRK;
+  std::cout << s3.size() << LINE_BRK;
+
+  utd::string24 s4(s);
+  std::cout << s4 << LINE_BRK;
+  utd::string24 s5(s2);
+  std::cout << s5 << LINE_BRK;
 }

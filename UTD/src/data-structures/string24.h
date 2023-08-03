@@ -10,11 +10,14 @@ namespace utd {
     static constexpr auto LARGE_STRING_FLAG{ 32 };
     static constexpr auto PADDING_4{ 4 };
     static constexpr auto PADDING_3{ 3 };
+    static constexpr auto SIZE_EXLUDING_DATA{ 16 };
 
-    typedef char*       char_ptr;
-    typedef const char* c_string;
-    typedef char&       char_ref;
-    typedef const char& const_char_ref;
+    typedef char*           char_ptr;
+    typedef const char*     c_string;
+    typedef char&           char_ref;
+    typedef const char&     const_char_ref;
+    typedef const string24& const_string_ref;
+    typedef string24&&      string_r_value;
 
     class small_string {
     private:
@@ -53,6 +56,16 @@ namespace utd {
     string24();
 
     string24(c_string);
+
+    string24(const_string_ref);
+
+    string24(string_r_value);
+
+    string24& operator=(const_string_ref);
+
+    string24& operator=(string_r_value);
+
+    ~string24();
 
     size_t size() const noexcept;
 
