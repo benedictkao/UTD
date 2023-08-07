@@ -27,7 +27,7 @@ target_sources(timer PRIVATE "src/utils/timer.cpp")
 ### String
 add_library(string SHARED)
 set_target_properties(string PROPERTIES CXX_STANDARD 20)
-target_sources(string PRIVATE "src/data-structures/string.cpp" "src/data-structures/string32.cpp")
+target_sources(string PRIVATE "src/data-structures/string.cpp" "src/data-structures/string32.cpp" "src/data-structures/string24.cpp" )
 
 ### Math
 add_library(math SHARED)
@@ -84,6 +84,10 @@ target_link_libraries(vector_test gtest_main math)
 add_executable(string32_test "tests/data-structures/string32_test.cpp")
 set_property(TARGET string32_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(string32_test gtest_main string)
+
+add_executable(string24_test "tests/data-structures/string24_test.cpp")
+set_property(TARGET string24_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(string24_test gtest_main string)
 
 add_executable(array_test "tests/data-structures/array_test.cpp")
 set_property(TARGET array_test PROPERTY CXX_STANDARD 20)
