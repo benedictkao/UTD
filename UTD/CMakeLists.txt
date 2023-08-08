@@ -109,6 +109,10 @@ add_executable(main_string_benchmark "benchmarks/string.cpp")
 set_property(TARGET main_string_benchmark PROPERTY CXX_STANDARD 20)
 target_link_libraries(main_string_benchmark benchmark::benchmark string benchmark_helper)
 
+add_executable(main_string_24_benchmark "benchmarks/string24.cpp")
+set_property(TARGET main_string_24_benchmark PROPERTY CXX_STANDARD 20)
+target_link_libraries(main_string_24_benchmark benchmark::benchmark string benchmark_helper)
+
 add_executable(main_vector_benchmark "benchmarks/vector.cpp")
 set_property(TARGET main_vector_benchmark PROPERTY CXX_STANDARD 20)
 target_link_libraries(main_vector_benchmark benchmark::benchmark math benchmark_helper)

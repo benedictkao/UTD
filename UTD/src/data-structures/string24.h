@@ -52,13 +52,13 @@ namespace utd {
 
     ~string24();
 
-    uint64_t size() const;
+    uint64_t size() const noexcept;
 
     bool empty() const;
 
     uint64_t capacity() const;
 
-    const char* c_str() const;
+    const char* c_str() const noexcept;
 
     void reserve(uint64_t);
 

@@ -3,19 +3,20 @@
 #include <cstring>
 
 /*
-* Size of string is 32:
-* 
-* Large string:
-* - 8 bytes for data pointer -> points to heap memory
-* - 8 bytes for size
-* - 8 bytes for capacity
-* - 8 bytes spare space
-* 
-* Small string:
-* - 8 bytes for data pointer -> points to capacity (which is used to start char array in small string)
-* - 8 bytes for size
-* - 16 bytes for char array (last element must be null terminator)
-*/
+ * Size of string is 32:
+ *
+ * Large string:
+ * - 8 bytes for data pointer -> points to heap memory
+ * - 8 bytes for size
+ * - 8 bytes for capacity
+ * - 8 bytes spare space
+ *
+ * Small string:
+ * - 8 bytes for data pointer -> points to capacity (which is used to start char
+ * array in small string)
+ * - 8 bytes for size
+ * - 16 bytes for char array (last element must be null terminator)
+ */
 static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
 
 static constexpr size_t CHAR_BUFFER_SIZE{ 7 };
@@ -33,8 +34,9 @@ void utd::string32::setLargeString() {
 }
 
 /*
-* For small strings, _capacity, _char_buffer and _flags are used to store the character data and null terminator
-*/
+ * For small strings, _capacity, _char_buffer and _flags are used to store the
+ * character data and null terminator
+ */
 void utd::string32::pointToInSituMemory() {
   _data = (char*) &_capacity;
 }
@@ -87,7 +89,7 @@ utd::string32::string32(string32&& s) noexcept {
   } else {
     pointToInSituMemory();
   }
-  
+
   s._data     = nullptr;
   s._size     = 0;
   s._capacity = 0;
@@ -103,7 +105,7 @@ utd::string32& utd::string32::operator=(const string32& s) {
   _capacity = s._capacity;
   memcpy(_char_buffer, s._char_buffer, CHAR_BUFFER_SIZE);
   _flags = s._flags;
-  
+
   if (_size > SMALL_STRING_MAX_LENGTH) {
     _data = new char[_capacity];
     strcpy(_data, s._data);
@@ -127,7 +129,7 @@ utd::string32& utd::string32::operator=(string32&& s) noexcept {
   } else {
     pointToInSituMemory();
   }
-  
+
   s._data     = nullptr;
   s._size     = 0;
   s._capacity = 0;
@@ -145,7 +147,7 @@ utd::string32::~string32() {
 
 // Public Methods
 
-uint64_t utd::string32::size() const {
+uint64_t utd::string32::size() const noexcept {
   return _size;
 }
 
@@ -161,20 +163,21 @@ uint64_t utd::string32::capacity() const {
   }
 }
 
-const char* utd::string32::c_str() const {
+const char* utd::string32::c_str() const noexcept {
   return _data;
 }
 
 /*
- * Will reserve space for a n-size string. This means that at least n+1 memory space will be allocated to include the null terminator.
+ * Will reserve space for a n-size string. This means that at least n+1 memory
+ * space will be allocated to include the null terminator.
  */
 void utd::string32::reserve(uint64_t n) {
   if (n <= SMALL_STRING_MAX_LENGTH) {
     return;
   }
-  
+
   char* new_data = new char[n + 1];
-  
+
   if (n < _size) {
     _size = n;
   }
@@ -274,7 +277,7 @@ utd::string32& utd::string32::operator+=(char rhs) {
     _capacity = new_capacity;
     setLargeString();
   }
-  
+
   *(_data + this->_size - 1) = rhs; // replace null termination with rhs char
   *(_data + this->_size)     = 0;   // add back null termination
   return *this;

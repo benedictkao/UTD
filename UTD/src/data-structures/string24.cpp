@@ -152,9 +152,11 @@ utd::string24::~string24() {
 
 // Public Methods
 
-uint64_t utd::string24::size() const {
+uint64_t utd::string24::size() const noexcept {
   if (isLargeString())
     return _size;
+  else if (_small_size % 2 == 0)
+    return 5;
   return _small_size;
 }
 
@@ -170,7 +172,7 @@ uint64_t utd::string24::capacity() const {
   }
 }
 
-const char* utd::string24::c_str() const {
+const char* utd::string24::c_str() const noexcept {
   if (isLargeString()) {
     return _ptr;
   } else {
