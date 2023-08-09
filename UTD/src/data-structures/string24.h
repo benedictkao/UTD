@@ -6,10 +6,8 @@
 namespace utd {
   class string24 {
   private:
-    static constexpr auto SMALL_STRING_MAX_SIZE{ 23 };
-    static constexpr auto LARGE_STRING_FLAG{ 32 };
-    static constexpr auto PADDING_4{ 4 };
-    static constexpr auto PADDING_3{ 3 };
+    static constexpr auto LARGE_STRING_FLAG{ static_cast<uint64_t>(1) << 63 };
+    static constexpr auto SMALL_STRING_CAPACITY{ 22 };
     static constexpr auto SIZE_EXLUDING_DATA{ 16 };
 
     typedef char*           char_ptr;
@@ -21,22 +19,18 @@ namespace utd {
 
     class small_string {
     private:
-      static constexpr auto SMALL_STRING_CAPACITY{ 24 };
-      static constexpr auto REMAINING_CAPACITY_BIT_MASK{ 31 };
+      static constexpr auto ARRAY_LENGTH{ SMALL_STRING_CAPACITY + 1 };
 
-      char _data[SMALL_STRING_CAPACITY];
-
-      void initEmpty();
+      char    _data[ARRAY_LENGTH];
+      uint8_t _last_byte;
 
       void init(c_string, size_t);
 
       size_t size() const noexcept;
 
-      void size(uint8_t);
+      void size(size_t);
 
       c_string c_str() const noexcept;
-
-      uint8_t remainingCapacity() const noexcept;
 
       char_ref charAt(size_t);
 
@@ -46,11 +40,15 @@ namespace utd {
     };
 
     char_ptr _data;
-    uint32_t _size;
-    uint8_t  _first_padding[PADDING_4];
-    uint32_t _capacity;
-    uint8_t  _second_padding[PADDING_3];
-    uint8_t  _flags;
+
+    /*
+     * For litte endian, max capacity is 2^63 - 1 since MSB has to be
+     * used as flag. This means that max size is 2^63 -2.
+     * 
+     * TODO: fix behaviour for big endian
+     */
+    uint64_t _size;
+    uint64_t _capacity;
 
   public:
     string24();
@@ -59,15 +57,17 @@ namespace utd {
 
     string24(const_string_ref);
 
-    string24(string_r_value);
+    string24(string_r_value) noexcept;
 
     string24& operator=(const_string_ref);
 
-    string24& operator=(string_r_value);
+    string24& operator=(string_r_value) noexcept;
 
     ~string24();
 
     size_t size() const noexcept;
+
+    size_t capacity() const noexcept;
 
     c_string c_str() const noexcept;
 
