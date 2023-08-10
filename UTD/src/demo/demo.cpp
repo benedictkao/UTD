@@ -135,4 +135,18 @@ void demo::demo_string24() {
   std::cout << s4 << LINE_BRK;
   utd::string24 s5(s2);
   std::cout << s5 << LINE_BRK;
+
+  utd::string24 s6 = s4 + "!!!!";
+  std::cout << s6 << LINE_BRK;
+  utd::string24 s7 = s6 + " This is no longer a small string";
+  std::cout << s7 << LINE_BRK;
+  utd::string24 s8 = s5 + "!!!!";
+  std::cout << s8 << LINE_BRK;
+
+  s += "..";
+  std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
+  s += s2;
+  std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
 }

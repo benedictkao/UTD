@@ -7,6 +7,22 @@ void utd::string24::small_string::init(c_string c_str, size_t len) {
   size(len);
 }
 
+void utd::string24::small_string::init(const small_string* lhs,
+                                       const small_string* rhs) {
+  // TODO: there are uninitialised bytes in the middle if len is not size 23
+  strcpy(_data, lhs->_data);
+  strcpy(_data + lhs->size(), rhs->_data);
+  size(lhs->size() + rhs->size());
+}
+
+void utd::string24::small_string::init(const small_string* lhs, char rhs) {
+  // TODO: there are uninitialised bytes in the middle if len is not size 23
+  strcpy(_data, lhs->_data);
+  _data[lhs->size()]     = rhs;
+  _data[lhs->size() + 1] = 0;
+  size(lhs->size() + 1);
+}
+
 size_t utd::string24::small_string::size() const noexcept {
   return static_cast<size_t>(_last_byte);
 }
@@ -33,7 +49,7 @@ utd::string24::string24() : _data(0), _size(0), _capacity(0) {}
 utd::string24::string24(c_string c_str) {
   size_t len = strlen(c_str);
 
-  if (len <= SMALL_STRING_CAPACITY) {
+  if (len < SMALL_STRING_CAPACITY) {
     toSmall()->init(c_str, len);
   } else {
     _size     = static_cast<uint32_t>(len);
@@ -148,6 +164,125 @@ utd::string24::operator[](size_t index) const noexcept {
     return _data[index];
   else
     return toSmall()->charAt(index);
+}
+
+utd::string24 utd::string24::operator+(const_string_ref rhs) const {
+  string24 lhs;
+  size_t   sz   = size();
+  lhs._capacity = lhs._size = sz + rhs.size();
+  if (lhs._size > SMALL_STRING_CAPACITY) {
+    lhs._data = new char[lhs._capacity + 1];
+    strcpy(lhs._data, c_str());
+    strcpy(lhs._data + sz, rhs.c_str());
+    lhs.setLarge();
+  } else {
+    lhs.toSmall()->init(this->toSmall(), rhs.toSmall());
+  }
+  return lhs;
+}
+
+utd::string24& utd::string24::operator+=(const_string_ref rhs) {
+  // TODO: reduce code duplication
+  if (isLarge()) {
+    size_t cap      = static_cast<size_t>(_capacity ^ LARGE_STRING_FLAG);
+    size_t rhs_size = rhs.size();
+    size_t tot_size = _size + rhs_size;
+    if (tot_size > cap) {
+      char* new_data = new char[tot_size + 1];
+      strcpy(new_data, _data);
+      strcpy(new_data + _size, rhs.c_str());
+      delete[] _data;
+      _data     = new_data;
+      _size     = tot_size;
+      _capacity = tot_size | LARGE_STRING_FLAG;
+    } else {
+      strcpy(_data + _size, rhs.c_str());
+      _size = tot_size;
+    }
+  } else {
+    small_string* lhs      = toSmall();
+    size_t        lhs_size = lhs->size();
+    size_t        rhs_size = rhs.size();
+    size_t        tot_size = lhs_size + rhs_size;
+    if (tot_size > SMALL_STRING_CAPACITY) {
+      char* new_data = new char[tot_size + 1];
+      strcpy(new_data, lhs->c_str());
+      strcpy(new_data + lhs_size, rhs.c_str());
+      _data     = new_data;
+      _size     = tot_size;
+      _capacity = tot_size | LARGE_STRING_FLAG;
+    } else {
+      strcpy(lhs->_data + lhs_size, rhs.c_str());
+      lhs->size(tot_size);
+    }
+  }
+  return *this;
+}
+
+utd::string24 utd::string24::operator+(char rhs) const {
+  string24 lhs;
+  size_t   sz   = size();
+  lhs._capacity = lhs._size = sz + 1;
+  if (lhs._size > SMALL_STRING_CAPACITY) {
+    lhs._data = new char[lhs._capacity + 1];
+    strcpy(lhs._data, c_str());
+    char_ptr last = lhs._data + sz;
+    *last         = rhs;
+    ++last;
+    *last = 0;
+    lhs.setLarge();
+  } else {
+    lhs.toSmall()->init(this->toSmall(), rhs);
+  }
+  return lhs;
+}
+
+utd::string24& utd::string24::operator+=(char rhs) {
+  // TODO: reduce code duplication
+  if (isLarge()) {
+    size_t cap      = static_cast<size_t>(_capacity ^ LARGE_STRING_FLAG);
+    size_t tot_size = _size + 1;
+    if (tot_size > cap) {
+      char* new_data = new char[tot_size + 1];
+      strcpy(new_data, _data);
+      char_ptr ptr = new_data + _size;
+      *ptr         = rhs;
+      ++ptr;
+      *ptr = 0;
+      delete[] _data;
+      _data     = new_data;
+      _size     = tot_size;
+      _capacity = tot_size | LARGE_STRING_FLAG;
+    } else {
+      char_ptr ptr = _data + _size;
+      *ptr         = rhs;
+      ++ptr;
+      *ptr  = 0;
+      _size = tot_size;
+    }
+  } else {
+    small_string* lhs      = toSmall();
+    size_t        lhs_size = lhs->size();
+    size_t        tot_size = lhs_size + 1;
+    if (tot_size > SMALL_STRING_CAPACITY) {
+      char* new_data = new char[tot_size + 1];
+      strcpy(new_data, lhs->c_str());
+      char_ptr ptr = new_data + _size;
+      *ptr         = rhs;
+      ++ptr;
+      *ptr      = 0;
+      _data     = new_data;
+      _size     = tot_size;
+      _capacity = tot_size | LARGE_STRING_FLAG;
+    } else {
+      char_ptr ptr = lhs->_data + _size;
+      *ptr         = rhs;
+      ++ptr;
+      *ptr = 0;
+      lhs->size(tot_size);
+    }
+  }
+  return *this;
 }
 
 std::ostream& utd::operator<<(std::ostream& os, const string24& s) {

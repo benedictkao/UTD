@@ -26,6 +26,10 @@ namespace utd {
 
       void init(c_string, size_t);
 
+      void init(const small_string* lhs, const small_string* rhs);
+
+      void init(const small_string* lhs, char rhs);
+
       size_t size() const noexcept;
 
       void size(size_t);
@@ -84,6 +88,14 @@ namespace utd {
     char_ref operator[](size_t);
 
     const_char_ref operator[](size_t) const noexcept;
+
+    string24 operator+(const_string_ref) const;
+
+    string24& operator+=(const_string_ref);
+
+    string24 operator+(char) const;
+
+    string24& operator+=(char);
 
   public:
     friend std::ostream& operator<<(std::ostream&, const string24&);
