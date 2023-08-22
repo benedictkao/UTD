@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../data-structures/array.h"
+#include "../data-structures/string24.h"
 #include "../data-structures/string32.h"
 #include "../data-structures/unordered_set.h"
 #include "../utils/timer.h"
@@ -109,4 +110,43 @@ void demo::demo_array_iterator() {
   utd::array<int, 5> arr = { 1, 2, 3 };
   for (int i : arr)
     std::cout << i << LINE_BRK;
+}
+
+void demo::demo_string24() {
+  utd::string24 s = "hello";
+  std::cout << s[0] << ',' << s[1] << LINE_BRK;
+  std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
+
+  utd::string24 s2 = "this is a very very long stringggggg";
+  std::cout << s2 << LINE_BRK;
+  std::cout << s2.size() << LINE_BRK;
+
+  utd::string24 s3;
+  std::cout << s3.size() << LINE_BRK;
+  s3 = s;
+  std::cout << s3 << LINE_BRK;
+  std::cout << s3.size() << LINE_BRK;
+  s3 = s2;
+  std::cout << s3 << LINE_BRK;
+  std::cout << s3.size() << LINE_BRK;
+
+  utd::string24 s4(s);
+  std::cout << s4 << LINE_BRK;
+  utd::string24 s5(s2);
+  std::cout << s5 << LINE_BRK;
+
+  utd::string24 s6 = s4 + "!!!!";
+  std::cout << s6 << LINE_BRK;
+  utd::string24 s7 = s6 + " This is no longer a small string";
+  std::cout << s7 << LINE_BRK;
+  utd::string24 s8 = s5 + "!!!!";
+  std::cout << s8 << LINE_BRK;
+
+  s += "..";
+  std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
+  s += s2;
+  std::cout << s << LINE_BRK;
+  std::cout << s.size() << LINE_BRK;
 }
