@@ -72,3 +72,5 @@ namespace utd {
 		friend std::ostream& operator<<(std::ostream&, const string32&);
 	};
 }
+
+#include "string32.cpp"
