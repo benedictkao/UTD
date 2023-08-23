@@ -1,4 +1,4 @@
-#include "string.h"
+//#include "string.h"
 
 utd::string::string(const char* s) {
   str_size    = strlen(s);

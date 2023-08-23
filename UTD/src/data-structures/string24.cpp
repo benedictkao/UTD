@@ -1,4 +1,4 @@
-#include "string24.h"
+//#include "string24.h"
 #include <cstring>
 
 void utd::string24::small_string::init(c_string c_str, size_t len) {

@@ -101,3 +101,5 @@ namespace utd {
     friend std::ostream& operator<<(std::ostream&, const string24&);
   };
 } // namespace utd
+
+#include "string24.cpp"
