@@ -11,19 +11,27 @@ Plans to benchmark unstandard library
 
 ## Build
 
-MacOS
-- -DCMAKE_BUILD_TYPE=Release ensures a production build
-- -DCMAKE_CXX_FLAGS=-DMEMORY_PROFILE allows the measurement of memory (Optional)
+**MacOS**
+- `-DCMAKE_BUILD_TYPE=Release` ensures a production build
+- `-DCMAKE_CXX_FLAGS=-DMEMORY_PROFILE` allows the measurement of memory (Optional)
 
 ```sh
 cmake -B ./build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-DMEMORY_PROFILER
 cmake --build ./build
 ```
 
+## Run 
+
+```sh
+./build/main_string_benchmark --benchmark_format=<console|json|csv> 
+# default is console
+```
+
+
 
 ## Metrics
 
-### CPU Info
+#### CPU Info
 ``` 
 Example
 - Run on (8 X 24 MHz CPU s)
@@ -34,7 +42,7 @@ Example
   - L3 ??
 ```
   
-### Performance
+#### Performance
 ```
 Time
     - time (Total time used to run code, nanosecond)
@@ -56,23 +64,17 @@ Big O Notation
 ## Measurement Methods
 
 ### Remove optimisations
-Remove optimisations
-
-**benchmark::DoNotOptimize(x += i);**
-
-**benchmark::ClobberMemory();**
+- `benchmark::DoNotOptimize(x += i);`
+- `benchmark::ClobberMemory();`
 
 ### Multiple Iterations
 
-**BENCHMARK(BM_memcpy)->RangeMultiplier(2)->Range(8, 8<<10);**
-
 Steps in multiplication
-
-**BENCHMARK(BM_memcpy)->DenseRange(8, 8<<10, 1);**
+- `BENCHMARK(BM_memcpy)->RangeMultiplier(2)->Range(8, 8<<10);`
 
 Steps in addition
-
-**BENCHMARK(BM_memcpy)->Iterations(17);**
+- `BENCHMARK(BM_memcpy)->DenseRange(8, 8<<10, 1);`
+- `BENCHMARK(BM_memcpy)->Iterations(17);`
 
 ### Measuring for memory usage
 
@@ -134,8 +136,8 @@ BENCHMARK(BM_memory)
 ```
 
 
-### Examples
+## Examples
 [Google Benchmark Examples](https://github.com/google/benchmark/blob/62edc4fb00e1aeab86cc69c70eafffb17219d047/test)
 
-### Notes
+## Notes
 [C++ Benchmark User Guide](https://github.com/google/benchmark/blob/main/docs/user_guide.md#running-benchmarks)
