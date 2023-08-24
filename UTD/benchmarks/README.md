@@ -22,9 +22,22 @@ cmake --build ./build
 
 ## Run 
 
+View results on console
 ```sh
-./build/main_string_benchmark --benchmark_format=<console|json|csv> 
-# default is console
+cd ./build
+./main_string_benchmark 
+```
+
+Write results into csv file (results.csv file will be found in the dir where the command was executed)
+```sh
+cd ./build
+./main_string_benchmark --benchmark_format=csv > results.csv
+```
+
+Write results into json file (results.json file will be found in the dir where the command was executed)
+```sh
+cd ./build
+./main_string_benchmark --benchmark_format=json > results.json
 ```
 
 
