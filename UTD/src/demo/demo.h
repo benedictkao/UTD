@@ -10,4 +10,6 @@ namespace demo {
   void demo_array_iterator();
 
   void demo_string24();
+
+  void demo_unordered_set_m();
 } // namespace demo

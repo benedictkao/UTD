@@ -6,6 +6,7 @@
 #include "../data-structures/string24.h"
 #include "../data-structures/string32.h"
 #include "../data-structures/unordered_set.h"
+#include "../data-structures/unordered_set_m.h"
 #include "../utils/timer.h"
 
 static constexpr char LINE_BRK{ '\n' };
@@ -149,4 +150,39 @@ void demo::demo_string24() {
   s += s2;
   std::cout << s << LINE_BRK;
   std::cout << s.size() << LINE_BRK;
+}
+
+void demo::demo_unordered_set_m() {
+  {
+    utd::unordered_set_m<int> s;
+
+    s.insert(31);
+    s.insert(43);
+
+    s.insert(99);
+
+    s.insert(1);
+
+    s.insert(3);
+  }
+
+  {
+    utd::unordered_set_m<int> s;
+    s.max_load_factor(10.0);
+
+    s.insert(31);
+    s.insert(43);
+
+    s.insert(99);
+
+    s.insert(1);
+
+    s.insert(3);
+
+    const utd::node_m<int>* head = (s.begin());
+    while (head) {
+      std::cout << head->value << std::endl;
+      head = head->next;
+    }
+  }
 }

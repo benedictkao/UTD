@@ -53,6 +53,7 @@ target_sources(main_test PRIVATE
     "tests/data-structures/string32_test.cpp"
     "tests/data-structures/array_test.cpp"
     "tests/data-structures/unordered_set_test.cpp"
+    "tests/data-structures/unordered_set_m_test.cpp"
     "tests/utils/hash_test.cpp"
 )
 target_link_libraries(main_test
@@ -97,7 +98,11 @@ add_executable(unordered_set_test "tests/data-structures/unordered_set_test.cpp"
 set_property(TARGET unordered_set_test PROPERTY CXX_STANDARD 20)
 target_link_libraries(unordered_set_test gtest_main functional)
 
-gtest_discover_tests(vector_test string32_test array_test unordered_set_test)
+add_executable(unordered_set_m_test "tests/data-structures/unordered_set_m_test.cpp")
+set_property(TARGET unordered_set_m_test PROPERTY CXX_STANDARD 20)
+target_link_libraries(unordered_set_m_test gtest_main functional)
+
+gtest_discover_tests(vector_test string32_test array_test unordered_set_test unordered_set_m_test)
 
 # Benchmark
 add_library(benchmark_helper SHARED)
