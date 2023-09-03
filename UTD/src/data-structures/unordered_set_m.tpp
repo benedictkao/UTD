@@ -29,15 +29,16 @@ void utd::base_node<T>::clear() {
 }
 
 
-constexpr float MIN_LOAD_FACTOR     = 1.0;
-constexpr float DEFAULT_LOAD_FACTOR = 1.0;
+constexpr size_t DEFAULT_BUCKET_COUNT_M = 1.0;
+constexpr float  MIN_LOAD_FACTOR        = 1.0;
+constexpr float  DEFAULT_LOAD_FACTOR    = 1.0;
 
 template <typename T>
 utd::unordered_set_m<T>::unordered_set_m()
-    : _bucket_count(DEFAULT_LOAD_FACTOR)
+    : _bucket_count(DEFAULT_BUCKET_COUNT_M)
     , _max_load_factor(DEFAULT_LOAD_FACTOR)
     , _num_elements(0) {
-  _buckets = new base_node<T>[_max_load_factor];
+  _buckets = new base_node<T>[DEFAULT_BUCKET_COUNT_M];
 };
 
 template <typename T>
