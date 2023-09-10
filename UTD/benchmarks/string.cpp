@@ -8,10 +8,13 @@
 #include "./helper.h"
 #include <string.h>
 
+constexpr size_t STR_LENGTH_SHORT = 14;
+constexpr size_t STR_LENGTH_LONG  = 200;
 /*
  * BENCHMARK
  * std::string | utd::string | utd::string32 | utd::string24
  */
+
 /*
  * Benchmark, String Constructor
  * - Identical Characters
@@ -116,7 +119,6 @@ BENCHMARK(BM_constructor_string_random<std::string>)
   ->DenseRange(Start, End, Step)
   ->Complexity();
 
-
 /*
  * Benchmark, String Method - size()
  * - Random Characters
@@ -124,40 +126,39 @@ BENCHMARK(BM_constructor_string_random<std::string>)
 
 template <class T>
 static void BM_size_string_random(benchmark::State& state) {
-  char* c_str = new char[state.range(0) + 1];
-  generate_c_str(c_str, state.range(0), true);
-  T v(c_str);
+  const size_t random_str_len = rand() % STR_LENGTH_SHORT;
+  const size_t random_str_len_2 =
+    rand() % (STR_LENGTH_LONG) + (2 * STR_LENGTH_SHORT);
+
+  char* c_str = new char[random_str_len + 1];
+  generate_c_str(c_str, random_str_len, true);
+
+  char* c_str_2 = new char[random_str_len_2 + 1];
+  generate_c_str(c_str_2, random_str_len_2, true);
+
+  T v[2];
+  v[0] = c_str;
+  v[1] = c_str_2;
 
   for (auto _ : state)
-    benchmark::DoNotOptimize(v.size());
+    benchmark::DoNotOptimize(v[rand() % 2].size());
 
+  delete[] c_str_2;
   delete[] c_str;
-  state.SetComplexityN(state.range(0));
 }
 
 BENCHMARK(BM_size_string_random<utd::string>)
-  ->Name("Method size() <utd::string> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method size() <utd::string> (random)");
 
 BENCHMARK(BM_size_string_random<utd::string24>)
-  ->Name("Method size() <utd::string24> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method size() <utd::string24> (random)");
 
 BENCHMARK(BM_size_string_random<utd::string32>)
-  ->Name("Method size() <utd::string32> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method size() <utd::string32> (random)");
 
 BENCHMARK(BM_size_string_random<std::string>)
-  ->Name("Method size() <std::string> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method size() <std::string> (random)");
+
 
 /*
  * Benchmark, String Method - c_str()
@@ -166,40 +167,39 @@ BENCHMARK(BM_size_string_random<std::string>)
 
 template <class T>
 static void BM_c_str_string_random(benchmark::State& state) {
-  char* c_str = new char[state.range(0) + 1];
-  generate_c_str(c_str, state.range(0), true);
-  T v(c_str);
+  const size_t random_str_len = rand() % STR_LENGTH_SHORT;
+  const size_t random_str_len_2 =
+    rand() % (STR_LENGTH_LONG) + (2 * STR_LENGTH_SHORT);
+
+  char* c_str = new char[random_str_len + 1];
+  generate_c_str(c_str, random_str_len, true);
+
+  char* c_str_2 = new char[random_str_len_2 + 1];
+  generate_c_str(c_str_2, random_str_len_2, true);
+
+  T v[2];
+  v[0] = c_str;
+  v[1] = c_str_2;
 
   for (auto _ : state)
-    benchmark::DoNotOptimize(v.c_str());
+    benchmark::DoNotOptimize(v[rand() % 2].c_str());
 
+  delete[] c_str_2;
   delete[] c_str;
-  state.SetComplexityN(state.range(0));
 }
 
 BENCHMARK(BM_c_str_string_random<utd::string>)
-  ->Name("Method c_str() <utd::string> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method c_str() <utd::string> (random)");
 
 BENCHMARK(BM_c_str_string_random<utd::string24>)
-  ->Name("Method c_str() <utd::string24> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method c_str() <utd::string24> (random)");
 
 BENCHMARK(BM_c_str_string_random<utd::string32>)
-  ->Name("Method c_str() <utd::string32> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method c_str() <utd::string32> (random)");
 
 BENCHMARK(BM_c_str_string_random<std::string>)
-  ->Name("Method c_str() <std::string> (random)")
-  ->RangeMultiplier(2)
-  ->Range(1 << 0, 1 << 15)
-  ->Complexity();
+  ->Name("Method c_str() <std::string> (random)");
+
 
 /*
  * Benchmark, Operator compare - ==
