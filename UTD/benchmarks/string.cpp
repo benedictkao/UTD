@@ -2,17 +2,28 @@
 #include <iostream>
 #include <memory>
 
-#include "../src/data-structures/string.h"
+#include "../src/data-structures/basic_string.h"
 #include "../src/data-structures/string24.h"
 #include "../src/data-structures/string32.h"
 #include "./helper.h"
 #include <string.h>
 
+/*
+ * Define the tests that you want to run
+ */
+#define CTOR
+//#define RAND_CTOR
+//#define RAND_CTOR_DENSE
+//#define SIZE
+//#define C_STR
+//#define COMPARE
+//#define COPY
+
 constexpr size_t STR_LENGTH_SHORT = 14;
 constexpr size_t STR_LENGTH_LONG  = 200;
 /*
  * BENCHMARK
- * std::string | utd::string | utd::string32 | utd::string24
+ * std::string | utd::basic_string | utd::string32 | utd::string24
  */
 
 /*
@@ -45,8 +56,9 @@ static void BM_constructor_string_random(benchmark::State& state) {
   state.SetComplexityN(state.range(0));
 }
 
-BENCHMARK(BM_constructor_string<utd::string>)
-  ->Name("Constructor <utd::string>")
+#ifdef CTOR
+BENCHMARK(BM_constructor_string<utd::basic_string>)
+  ->Name("Constructor <utd::basic_string>")
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
@@ -68,9 +80,11 @@ BENCHMARK(BM_constructor_string<std::string>)
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
+#endif
 
-BENCHMARK(BM_constructor_string_random<utd::string>)
-  ->Name("Constructor <utd::string> (random)")
+#ifdef RAND_CTOR
+BENCHMARK(BM_constructor_string_random<utd::basic_string>)
+  ->Name("Constructor <utd::basic_string> (random)")
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
@@ -92,15 +106,17 @@ BENCHMARK(BM_constructor_string_random<std::string>)
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
+#endif
 
+#ifdef RAND_CTOR_DENSE
 /*
  * Benchmark, String Constructor
  * - Random Characters + Small Range Steps (1 to 32, steps of 1)
  */
 int Start = 1, End = 32, Step = 1;
 
-BENCHMARK(BM_constructor_string_random<utd::string>)
-  ->Name("Constructor <utd::string> (random, dense)")
+BENCHMARK(BM_constructor_string_random<utd::basic_string>)
+  ->Name("Constructor <utd::basic_string> (random, dense)")
   ->DenseRange(Start, End, Step)
   ->Complexity();
 
@@ -118,6 +134,7 @@ BENCHMARK(BM_constructor_string_random<std::string>)
   ->Name("Constructor <std::string> (random, dense) ")
   ->DenseRange(Start, End, Step)
   ->Complexity();
+#endif
 
 /*
  * Benchmark, String Method - size()
@@ -147,8 +164,9 @@ static void BM_size_string_random(benchmark::State& state) {
   delete[] c_str;
 }
 
-BENCHMARK(BM_size_string_random<utd::string>)
-  ->Name("Method size() <utd::string> (random)");
+#ifdef SIZE
+BENCHMARK(BM_size_string_random<utd::basic_string>)
+  ->Name("Method size() <utd::basic_string> (random)");
 
 BENCHMARK(BM_size_string_random<utd::string24>)
   ->Name("Method size() <utd::string24> (random)");
@@ -158,6 +176,7 @@ BENCHMARK(BM_size_string_random<utd::string32>)
 
 BENCHMARK(BM_size_string_random<std::string>)
   ->Name("Method size() <std::string> (random)");
+#endif
 
 
 /*
@@ -188,8 +207,9 @@ static void BM_c_str_string_random(benchmark::State& state) {
   delete[] c_str;
 }
 
-BENCHMARK(BM_c_str_string_random<utd::string>)
-  ->Name("Method c_str() <utd::string> (random)");
+#ifdef C_STR
+BENCHMARK(BM_c_str_string_random<utd::basic_string>)
+  ->Name("Method c_str() <utd::basic_string> (random)");
 
 BENCHMARK(BM_c_str_string_random<utd::string24>)
   ->Name("Method c_str() <utd::string24> (random)");
@@ -199,6 +219,7 @@ BENCHMARK(BM_c_str_string_random<utd::string32>)
 
 BENCHMARK(BM_c_str_string_random<std::string>)
   ->Name("Method c_str() <std::string> (random)");
+#endif
 
 
 /*
@@ -221,8 +242,9 @@ static void BM_compare_string_random(benchmark::State& state) {
   state.SetComplexityN(state.range(0));
 }
 
-BENCHMARK(BM_compare_string_random<utd::string>)
-  ->Name("Operator compare == <utd::string> (random)")
+#ifdef COMPARE
+BENCHMARK(BM_compare_string_random<utd::basic_string>)
+  ->Name("Operator compare == <utd::basic_string> (random)")
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
@@ -238,6 +260,7 @@ BENCHMARK(BM_compare_string_random<std::string>)
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
+#endif
 
 /*
  * Benchmark, Operator copy - =
@@ -258,8 +281,9 @@ static void BM_copy_string_random(benchmark::State& state) {
   state.SetComplexityN(state.range(0));
 }
 
-BENCHMARK(BM_copy_string_random<utd::string>)
-  ->Name("Operator copy = <utd::string> (random)")
+#ifdef COPY
+BENCHMARK(BM_copy_string_random<utd::basic_string>)
+  ->Name("Operator copy = <utd::basic_string> (random)")
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
@@ -281,6 +305,7 @@ BENCHMARK(BM_copy_string_random<std::string>)
   ->RangeMultiplier(2)
   ->Range(1 << 0, 1 << 15)
   ->Complexity();
+#endif
 
 
 int main(int argc, char** argv) {
