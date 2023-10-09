@@ -16,7 +16,7 @@
 * - 8 bytes for size
 * - 16 bytes for char array (last element must be null terminator)
 */
-static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ 15 };
+static constexpr uint8_t SMALL_STRING_MAX_LENGTH{ sizeof(size_t) + sizeof(char) * 7 };
 
 static constexpr size_t CHAR_BUFFER_SIZE{ 7 };
 
@@ -145,7 +145,7 @@ utd::string32::~string32() {
 
 // Public Methods
 
-uint64_t utd::string32::size() const {
+size_t utd::string32::size() const {
   return _size;
 }
 
@@ -153,7 +153,7 @@ bool utd::string32::empty() const {
   return _size == 0;
 }
 
-uint64_t utd::string32::capacity() const {
+size_t utd::string32::capacity() const {
   if (isLargeString()) {
     return _capacity;
   } else {
@@ -168,7 +168,7 @@ const char* utd::string32::c_str() const {
 /*
  * Will reserve space for a n-size string. This means that at least n+1 memory space will be allocated to include the null terminator.
  */
-void utd::string32::reserve(uint64_t n) {
+void utd::string32::reserve(size_t n) {
   if (n <= SMALL_STRING_MAX_LENGTH) {
     return;
   }
@@ -192,11 +192,11 @@ void utd::string32::reserve(uint64_t n) {
 
 // Operators
 
-char& utd::string32::operator[](uint64_t index) {
+char& utd::string32::operator[](size_t index) {
   return _data[index];
 }
 
-const char& utd::string32::operator[](uint64_t index) const {
+const char& utd::string32::operator[](size_t index) const {
   return _data[index];
 }
 
