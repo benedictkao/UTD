@@ -16,8 +16,8 @@ namespace utd {
 		  * otherwise the last byte cannot be used as a null terminator if the small string capacity is full
 		  */
           char*            _data;
-          uint64_t         _size;
-          uint64_t         _capacity;
+          size_t           _size;
+          size_t           _capacity;
           char             _char_buffer[7] = { 0 };
           uint8_t          _flags;
 		  
@@ -43,19 +43,19 @@ namespace utd {
 
 		~string32();
 
-		uint64_t size() const;
+		size_t size() const;
 
 		bool empty() const;
 
-		uint64_t capacity() const;
+		size_t capacity() const;
 
 		const char* c_str() const;
 
-		void reserve(uint64_t);
+		void reserve(size_t);
 
-		char& operator[](uint64_t);
+		char& operator[](size_t);
 
-        const char& operator[](uint64_t) const;
+        const char& operator[](size_t) const;
 
 		string32 operator+(const string32&) const;
 
