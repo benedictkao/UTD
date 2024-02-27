@@ -7,6 +7,7 @@
 #include "../data-structures/string32.h"
 #include "../data-structures/unordered_set.h"
 #include "../utils/timer.h"
+#include "../smart-pointers/unique_ptr.h"
 
 static constexpr char LINE_BRK{ '\n' };
 
@@ -149,4 +150,26 @@ void demo::demo_string24() {
   s += s2;
   std::cout << s << LINE_BRK;
   std::cout << s.size() << LINE_BRK;
+}
+
+void demo::demo_unique_ptr() {
+  struct MyClass {
+    int val;
+    char c;
+
+    MyClass(int val, char c): val(val), c(c) {
+      std::cout << "MyClass constructed" << LINE_BRK;
+    }
+
+    ~MyClass() {
+      std::cout << "MyClass destroyed" << LINE_BRK;
+    }
+  };
+
+  std::cout << "Demo unique pointer" << LINE_BRK;
+  {
+    auto ptr = utd::make_unique<MyClass>(5, 'a');
+    std::cout << "val = " << ptr->val << ", char = " << ptr->c << LINE_BRK;
+  }
+  std::cout << "Demo ended" << std::endl;
 }

@@ -2,7 +2,7 @@
 
 int main() {
 
-    demo::demo_string24();
+    demo::demo_unique_ptr();
 
     return 0;
 };
